@@ -1,0 +1,55 @@
+<resources>
+    <string name="app_name">OneKey</string>
+    <string name="input_digit">1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="pwd_hint">*密码用于保护您的私钥和授权，请谨慎填写。CFC钱包不能帮您存储密码，也无法帮您找回，请务必牢记。</string>
+    <string name="import_user">导入身份</string>
+    <string name="create_user">创建身份</string>
+
+    <string name="create_user_hint">只可以输入英文加数字组合20个字符以内（默认-）</string>
+    <string name="create_user_pwd_hint">请输入至少8位字母、数字、字符组合</string>
+    <string name="show_word">备份助记词</string>
+    <string name="login_word">身份助记词</string>
+    <string name="wallet_word">钱包助记词</string>
+    <string name="scan_result_hint">请确认扫码结果是否与浏览器地址一致？</string>
+
+    <string name="candy">糖果</string>
+    <string name="login_log">登录日志</string>
+    <string name="item_append">%1$s：%2$s</string>
+    <string name="login_url">登录地址</string>
+    <string name="login_time">登录时间</string>
+    <string name="message_center">消息中心</string>
+    <string name="about_us">关于我们</string>
+    <string name="account_setting">账户设置</string>
+    <string name="settings">设置</string>
+    <string name="sys_msg">系统公告</string>
+    <string name="msg_push">消息推送</string>
+    <string name="next">下一步</string>
+    <string name="complete">完成</string>
+    <string name="login_success">登录成功！</string>
+    <string name="login_fail">登录失败！</string>
+    <string name="login_fail_hint">请返回首页，重新扫码登录！</string>
+    <string name="current_version">当前版本：%1s</string>
+    <string name="go_star">去评分</string>
+    <string name="api_adddress">服务地址</string>
+    <string name="edit">编辑</string>
+    <string name="save">保存</string>
+    <string name="log_address">日志地址</string>
+    <string name="candy_address">糖果地址</string>
+    <string name="score_address">积分地址</string>
+    <string name="dont_null">%1s不能为空</string>
+    <string name="address_input_hint">%1s不是正确的链接，如：http/https开头</string>
+    <string name="add_account">添加账户</string>
+    <string name="integral">积分</string>
+    <string name="account_manager">账户管理</string>
+    <string name="all">全部</string>
+    <string name="account_out">转出</string>
+    <string name="account_in">转入</string>
+    <string name="account_failed">失败</string>
+    <string name="helper_word">助记词</string>
+    <string name="show_account">显示</string>
+    <string name="change_score">转赠</string>
+    <string name="save_img_location">保存图片到本地</string>
+    <string name="coll_gift">收礼</string>
+    <string name="login_account_hint">建议：扫码登录使用身份名称账户登录</string>
+    <string name="send_score">请输入转赠积分</string>
+</resources>

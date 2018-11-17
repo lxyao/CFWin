@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dp_90">90dp</dimen>
+    <dimen name="dp_45">45dp</dimen>
+    <dimen name="dp_32">32dp</dimen>
+    <dimen name="qrcode_w">178dp</dimen>
+</resources>

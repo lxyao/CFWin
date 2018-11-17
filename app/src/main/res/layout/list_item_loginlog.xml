@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match.wrap.hor_linear"
+    android:gravity="center_vertical"
+    android:background="@drawable/bg_item_login">
+    <LinearLayout
+        style="@style/match.wrap.ver_linear"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_12">
+        <TextView
+            android:id="@+id/item_title"
+            style="@style/match.wrap"
+            tools:text="登录地址：wwww.baidu.comeer"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="@dimen/sp_15"
+            android:textColor="@color/bg_272F4F"/>
+        <TextView
+            android:id="@+id/item_subtitle"
+            style="@style/match.wrap"
+            tools:text="登录时间：2018-10-12 12:21:21"
+            android:singleLine="true"
+            android:textSize="@dimen/sp_14"
+            android:textColor="@color/bg_272F4F"
+            android:layout_marginTop="@dimen/dp_8"/>
+    </LinearLayout>
+    <CheckBox
+        android:id="@+id/item_icon"
+        tools:checked="true"
+        android:enabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:button="@drawable/bg_login_state"
+        android:layout_width="@dimen/dp_35"
+        android:layout_height="@dimen/dp_35"
+        android:layout_marginLeft="@dimen/dp_12"/>
+</LinearLayout>

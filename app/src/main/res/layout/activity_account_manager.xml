@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/match.ver_linear"
+    android:background="@color/bg_20253A"
+    android:fitsSystemWindows="true">
+    <include layout="@layout/base_top_toolbar"/>
+    <ListView
+        android:id="@android:id/list"
+        style="@style/list"
+        android:layout_marginBottom="@dimen/dp_20"
+        android:layout_marginTop="@dimen/dp_20"/>
+</LinearLayout>

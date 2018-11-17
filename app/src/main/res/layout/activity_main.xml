@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match.ver_linear"
+    tools:context=".activity.MainActivity1"
+    android:fitsSystemWindows="true"
+    android:background="@color/bg_20253A">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/home_vp"
+        style="@style/match"
+        android:layout_weight="1"
+        app:layout_constraintTop_toBottomOf="@id/base_top_toolbar"/>
+
+    <RadioGroup
+        android:id="@+id/home_nav"
+        style="@style/match.wrap"
+        android:background="@color/bg_272F4F"
+        android:minHeight="@dimen/dp_40"
+        android:orientation="horizontal"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <RadioButton
+            android:id="@+id/rb_home"
+            style="@style/match"
+            android:layout_weight="1"
+            android:button="@null"
+            android:checked="true"
+            android:paddingTop="@dimen/dp_10"
+            android:drawableTop="@drawable/bg_home_selector"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sp_10"/>
+        <RadioButton
+            android:id="@+id/rb_candy"
+            style="@style/match"
+            android:layout_weight="1"
+            android:button="@null"
+            android:paddingTop="@dimen/dp_10"
+            android:drawableTop="@drawable/bg_candy_selector"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sp_10"/>
+        <RadioButton
+            android:id="@+id/rb_loginLog"
+            style="@style/match"
+            android:layout_weight="1"
+            android:button="@null"
+            android:paddingTop="@dimen/dp_10"
+            android:drawableTop="@drawable/bg_loginlog_selector"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sp_10"/>
+        <RadioButton
+            android:id="@+id/rb_mine"
+            style="@style/match"
+            android:layout_weight="1"
+            android:button="@null"
+            android:paddingTop="@dimen/dp_10"
+            android:drawableTop="@drawable/bg_mine_selector"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sp_10"/>
+    </RadioGroup>
+
+</LinearLayout>

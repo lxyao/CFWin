@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/match.wrap.hor_linear"
+    android:gravity="center_vertical">
+    <CheckBox
+        android:id="@+id/item_cb"
+        style="@style/wrap"
+        android:focusable="false"
+        android:enabled="false"
+        android:button="@drawable/bg_radio_selector"
+        android:focusableInTouchMode="false"
+        android:layout_marginRight="@dimen/dp_5"/>
+    <include layout="@layout/list_item_account"/>
+</LinearLayout>

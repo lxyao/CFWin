@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/match.ver_linear"
+    android:background="@color/bg_20253A"
+    android:fitsSystemWindows="true">
+    <include layout="@layout/base_top_toolbar"/>
+    <LinearLayout
+        android:visibility="gone"
+        style="@style/match.wrap.hor_linear"
+        android:background="@color/bg_272F4F">
+        <TextView
+            android:id="@+id/tabAll"
+            style="@style/detail_tab"
+            android:text="@string/all" />
+        <TextView
+            android:id="@+id/tabOut"
+            style="@style/detail_tab"
+            android:text="@string/account_out"/>
+        <TextView
+            android:id="@+id/tabIn"
+            style="@style/detail_tab"
+            android:text="@string/account_in"/>
+        <TextView
+            android:id="@+id/tabFailed"
+            style="@style/detail_tab"
+            android:text="@string/account_failed"/>
+    </LinearLayout>
+    <View
+        android:visibility="gone"
+        android:id="@+id/tabLine"
+        style="@style/hor_lin"
+        android:layout_height="@dimen/dp_2"/>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        style="@style/match"
+        android:layout_weight="1"/>
+
+    <LinearLayout
+        style="@style/match.wrap.hor_linear"
+        android:layout_marginTop="@dimen/dp_12">
+        <Button
+            android:id="@+id/show_account"
+            style="@style/detail_btn"
+            android:background="@color/bg_FF9D33"
+            android:text="@string/show_account"/>
+        <Button
+            android:id="@+id/change_score"
+            style="@style/detail_btn"
+            android:background="@color/bg_272F4F"
+            android:text="@string/change_score"/>
+    </LinearLayout>
+</LinearLayout>

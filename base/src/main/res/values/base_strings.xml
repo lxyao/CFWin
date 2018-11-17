@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Base</string>
+    <string name="permission_hint">应用%1$s请求%2$s权限，以保证应用的相应功能可以正常使用；请授予应用必要的权限！</string>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="scan_title">扫码二维码</string>
+</resources>

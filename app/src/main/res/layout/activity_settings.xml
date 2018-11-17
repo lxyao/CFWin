@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fitsSystemWindows="true"
+    android:background="@color/bg_20253A">
+    <include layout="@layout/base_top_toolbar"/>
+
+    <LinearLayout
+        android:id="@+id/ll_accountset"
+        style="@style/mine_ll"
+        android:layout_marginTop="@dimen/dp_15"
+        app:layout_constraintTop_toBottomOf="@id/base_top_toolbar">
+        <TextView
+            android:id="@+id/mine_account"
+            style="@style/mine_menu"
+            android:text="@string/account_setting"
+            android:drawableLeft="@mipmap/ic_account"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_address"
+        style="@style/mine_ll"
+        app:layout_constraintTop_toBottomOf="@id/ll_accountset">
+        <TextView
+            android:id="@+id/mine_address"
+            style="@style/mine_menu"
+            android:text="@string/api_adddress"
+            android:drawableLeft="@mipmap/ic_account"/>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

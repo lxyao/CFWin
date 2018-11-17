@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match.ver_linear"
+    android:fitsSystemWindows="true"
+    android:background="@color/bg_20253A">
+    <include layout="@layout/base_top_toolbar"/>
+    <LinearLayout
+        android:background="@drawable/bg_txt_shape"
+        style="@style/match.wrap.ver_linear"
+        android:layout_margin="@dimen/dp_15"
+        android:gravity="center_horizontal">
+        <ImageView
+            android:layout_width="113dp"
+            android:layout_height="72dp"
+            android:src="@mipmap/ic_logo"
+            android:adjustViewBounds="true"
+            android:contentDescription="@null"
+            android:layout_marginTop="@dimen/dp_25"/>
+        <TextView
+            android:id="@+id/copy"
+            style="@style/wrap"
+            android:textSize="@dimen/sp_14"
+            android:maxWidth="170dp"
+            android:singleLine="true"
+            android:ellipsize="middle"
+            android:textColor="@color/white"
+            android:layout_marginTop="@dimen/dp_25"
+            android:layout_marginBottom="@dimen/dp_15"
+            android:drawableRight="@mipmap/ic_copy"
+            android:gravity="center_vertical"
+            tools:text="kksfjsifdjsiddddddfjfisjfisjfis"/>
+        
+        <ImageView
+            android:id="@+id/code2"
+            android:layout_width="@dimen/qrcode_w"
+            android:layout_height="@dimen/qrcode_w"
+            tools:src="@mipmap/logo"
+            android:scaleType="fitXY"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:id="@+id/download"
+            style="@style/wrap"
+            android:textSize="@dimen/sp_14"
+            android:textColor="@color/white"
+            android:layout_marginTop="@dimen/dp_15"
+            android:layout_marginBottom="@dimen/dp_25"
+            android:gravity="center_vertical"
+            android:drawableRight="@mipmap/ic_save_location"
+            android:text="@string/save_img_location"/>
+    </LinearLayout>
+</LinearLayout>

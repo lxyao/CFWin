@@ -1,0 +1,125 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="@style/base_theme">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+        <item name="colorAccent">@android:color/white</item>
+    </style>
+
+    <style name="create_user_input" parent="@style/match.wrap">
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLength">20</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@null</item>
+        <item name="android:textSize">@dimen/sp_12</item>
+        <item name="android:textColorHint">@color/bg_D9</item>
+        <item name="android:paddingTop">@dimen/dp_10</item>
+        <item name="android:paddingBottom">@dimen/dp_10</item>
+        <item name="android:layout_marginLeft">@dimen/dp_70</item>
+    </style>
+
+    <style name="login_btn" parent="@style/match.wrap">
+        <item name="android:textColor">@color/bg_20253A</item>
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:background">@drawable/bg_login_btn</item>
+        <item name="android:layout_marginLeft">@dimen/dp_12</item>
+        <item name="android:layout_marginRight">@dimen/dp_12</item>
+    </style>
+
+    <style name="word_card" parent="@style/match.wrap">
+        <item name="android:layout_marginLeft">@dimen/dp_10</item>
+        <item name="android:layout_marginRight">@dimen/dp_10</item>
+        <item name="android:layout_marginTop">@dimen/dp_10</item>
+        <item name="cardCornerRadius">@dimen/dp_10</item>
+        <item name="cardBackgroundColor">@color/bg_272F4F</item>
+    </style>
+
+    <style name="word_txt" parent="@style/match.wrap">
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:paddingLeft">@dimen/dp_10</item>
+        <item name="android:paddingRight">@dimen/dp_10</item>
+        <item name="android:paddingTop">@dimen/dp_15</item>
+        <item name="android:paddingBottom">@dimen/dp_15</item>
+        <item name="android:lineSpacingExtra">1.5sp</item>
+        <item name="android:lineSpacingMultiplier">1.5</item>
+    </style>
+
+    <style name="mine_ll" parent="@style/match.wrap.hor_linear">
+        <item name="android:paddingTop">@dimen/dp_12</item>
+        <item name="android:paddingBottom">@dimen/dp_12</item>
+        <item name="android:layout_marginTop">@dimen/dp_8</item>
+        <item name="android:layout_marginLeft">@dimen/dp_12</item>
+        <item name="android:layout_marginRight">@dimen/dp_12</item>
+        <item name="android:background">@drawable/bg_item_login</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="mine_menu" parent="@style/match.wrap">
+        <item name="android:textSize">@dimen/sp_14</item>
+        <item name="android:textColor">@color/bg_20253A</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:layout_marginLeft">@dimen/dp_10</item>
+        <item name="android:layout_marginRight">@dimen/dp_10</item>
+        <item name="android:drawableRight">@mipmap/ic_square_right</item>
+        <item name="android:clickable">false</item>
+    </style>
+
+    <style name="service_title" parent="wrap">
+        <item name="android:textSize">@dimen/sp_16</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_marginLeft">@dimen/dp_12</item>
+        <item name="android:layout_marginTop">@dimen/dp_15</item>
+    </style>
+
+    <style name="service_input" parent="match.wrap">
+        <item name="android:textSize">@dimen/sp_16</item>
+        <item name="android:textColor">@color/bg_99</item>
+        <item name="android:background">@null</item>
+        <item name="android:paddingTop">@dimen/dp_10</item>
+        <item name="android:paddingBottom">@dimen/dp_10</item>
+        <item name="android:layout_marginLeft">@dimen/dp_12</item>
+        <item name="android:layout_marginRight">@dimen/dp_12</item>
+        <item name="android:layout_marginTop">@dimen/dp_5</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:enabled">false</item>
+    </style>
+
+    <style name="service_line" parent="hor_lin">
+        <item name="android:background">@color/bg_97</item>
+        <item name="android:layout_marginLeft">@dimen/dp_12</item>
+        <item name="android:layout_marginRight">@dimen/dp_12</item>
+    </style>
+
+    <style name="list" parent="match">
+        <item name="android:background">@color/bg_20253A</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:listSelector">@android:color/transparent</item>
+        <item name="android:cacheColorHint">@android:color/transparent</item>
+        <item name="android:scrollingCache">false</item>
+        <item name="android:scrollbars">none</item>
+        <item name="android:divider">@android:color/transparent</item>
+        <item name="android:dividerHeight">@dimen/dp_12</item>
+        <item name="android:layout_marginLeft">@dimen/dp_12</item>
+        <item name="android:layout_marginRight">@dimen/dp_12</item>
+    </style>
+
+    <style name="detail_tab" parent="match.wrap">
+        <item name="android:textSize">@dimen/sp_15</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingTop">@dimen/dp_12</item>
+        <item name="android:paddingBottom">@dimen/dp_12</item>
+    </style>
+
+    <style name="detail_btn" parent="match.wrap">
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/sp_16</item>
+        <item name="android:onClick">onClick</item>
+    </style>
+</resources>

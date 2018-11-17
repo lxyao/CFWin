@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match.wrap.ver_linear"
+    android:background="@drawable/bg_txt_shape">
+    <TextView
+        android:id="@+id/item_title"
+        style="@style/match.wrap"
+        tools:text="我们最近升级了系统，带来了一些新的玩法和变化，推荐您进行升级体验…"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/sp_14"
+        android:layout_marginRight="@dimen/dp_15"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginTop="@dimen/dp_12"
+        android:layout_marginBottom="@dimen/dp_7"
+        android:lineSpacingMultiplier="1.2"/>
+    <TextView
+        android:id="@+id/item_time"
+        style="@style/wrap"
+        android:textSize="@dimen/sp_14"
+        android:textColor="@android:color/white"
+        tools:text="10-12 12:21"
+        android:layout_marginRight="@dimen/dp_15"
+        android:layout_marginLeft="@dimen/dp_15"
+        android:layout_marginBottom="@dimen/dp_12"
+        android:layout_gravity="right" />
+</LinearLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/match.ver_linear"
+    android:background="#CC000000"
+    android:fitsSystemWindows="true">
+    <include layout="@layout/base_top_toolbar"
+        android:visibility="invisible"/>
+    <TextView
+        android:layout_weight="1.5"
+        android:visibility="invisible"
+        style="@style/match" />
+    <RelativeLayout
+        style="@style/match"
+        android:paddingLeft="@dimen/dp_12"
+        android:paddingRight="@dimen/dp_12"
+        android:background="@color/white"
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/cancel"
+            style="@style/wrap"
+            android:textColor="@color/bg_66"
+            android:text="@string/cancel"
+            android:textSize="@dimen/sp_12"
+            android:padding="@dimen/dp_10"/>
+        <TextView
+            style="@style/wrap"
+            android:textColor="@color/bg_272F4F"
+            android:text="本身份下包含的账户"
+            android:textSize="@dimen/sp_15"
+            android:padding="@dimen/dp_10"
+            android:layout_centerHorizontal="true"/>
+        <TextView
+            android:id="@+id/sure"
+            style="@style/wrap"
+            android:textColor="@color/bg_20253A"
+            android:text="@string/confirm"
+            android:textSize="@dimen/sp_12"
+            android:padding="@dimen/dp_10"
+            android:layout_alignParentRight="true"/>
+        <ListView
+            android:id="@android:id/list"
+            style="@style/list"
+            android:background="@color/white"
+            android:layout_below="@id/cancel"/>
+    </RelativeLayout>
+</LinearLayout>

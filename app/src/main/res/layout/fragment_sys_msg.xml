@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_20253A">
+    <ListView
+        android:id="@+id/msg_list"
+        style="@style/match"
+        android:overScrollMode="never"
+        android:scrollingCache="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="@dimen/dp_12"
+        android:listSelector="@android:color/transparent"
+        android:cacheColorHint="@android:color/transparent"
+        android:paddingRight="@dimen/dp_12"
+        android:paddingLeft="@dimen/dp_12"
+        android:paddingBottom="@dimen/dp_12"/>
+</android.support.constraint.ConstraintLayout>
