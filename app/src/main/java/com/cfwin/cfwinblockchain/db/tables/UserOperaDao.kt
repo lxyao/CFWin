@@ -42,7 +42,7 @@ class UserOperaDao constructor(db: SQLiteDatabase) : AbsTableOpera(db) {
         val data = ArrayList<UserBean>()
         var where = ""
         if(!TextUtils.isEmpty(accountName))where = "accountName = $accountName"
-        val c = query(null, where, null, null, null, null)
+        val c = query(null, where, null, null, null, "type asc")
         c?.let {
             while (c.moveToNext()){
                 val bean = UserBean(_id = c.getInt(c.getColumnIndex("_id")),

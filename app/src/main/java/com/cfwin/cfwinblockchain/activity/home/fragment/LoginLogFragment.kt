@@ -2,23 +2,34 @@ package com.cfwin.cfwinblockchain.activity.home.fragment
 
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
+import android.view.TextureView
 import android.view.View
+import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
 import butterknife.BindView
+import com.android.volley.VolleyError
 import com.baison.common.utils.BaseRefreshUtil
+import com.cfwin.base.utils.LogUtil
 import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.AbsParentBaseActivity
 import com.cfwin.cfwinblockchain.activity.SubBaseFragment
+import com.cfwin.cfwinblockchain.activity.user.ADD_ACCOUNT
+import com.cfwin.cfwinblockchain.activity.user.ADD_IDENTIFY
 import com.cfwin.cfwinblockchain.adapter.LoginLogAdapter
 import com.cfwin.cfwinblockchain.beans.LoginLogItem
 import com.cfwin.cfwinblockchain.beans.UserBean
+import com.cfwin.cfwinblockchain.beans.response.ScoreResponse
+import com.cfwin.cfwinblockchain.beans.response.log.LogList
 import com.cfwin.cfwinblockchain.db.LocalDBManager
 import com.cfwin.cfwinblockchain.db.tables.LogOperaDao
 import com.cfwin.cfwinblockchain.http.VolleyListenerInterface
 import com.cfwin.cfwinblockchain.http.VolleyRequestUtil
+import com.cfwin.cfwinblockchain.utils.UrlSignUtil
 import com.chanven.lib.cptr.PtrClassicFrameLayout
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 /**
  * 主界面 - 登录布局
@@ -40,6 +51,7 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
     private val pageSize = Constant.PAGE_SIZE
     private lateinit var logHost: String
     private var user: UserBean? = null
+    private lateinit var logSign: String
 
     override fun getLayoutId(): Int {
         return R.layout.fragment_loginlog
@@ -51,6 +63,8 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
         topTitle.text = getString(R.string.login_log)
         toolBar.setBackgroundColor(resources.getColor(R.color.bg_272F4F))
         topLine.setBackgroundColor(resources.getColor(R.color.bg_272F4F))
+        refreshUtil = BaseRefreshUtil(this, refreshView)
+        refreshUtil.initView()
         initData()
     }
 
@@ -60,10 +74,8 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
             user = tmp.getUser()
             logHost = tmp.getServer(Constant.API.TYPE_LOG)
             if(TextUtils.isEmpty(user?.address))user?.address = ""
+            onPullDownRefresh()
         }
-//        val tmp = LocalDBManager(mContext!!).getTableOperation(LogOperaDao::class.java).queryData(user?.address!!, page)
-//        listView.adapter = LoginLogAdapter(mContext!!, tmp as MutableList<LoginLogItem>)
-        onPullDownRefresh()
     }
 
     override fun onPullDownRefresh() {
@@ -81,10 +93,71 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
     }
 
     private fun getRand(){
+        VolleyRequestUtil.RequestPost(mContext,
+                logHost+Constant.API.LOG_RAND,
+                "loginRand",
+                mapOf("address" to user?.address),
+                object :VolleyListenerInterface(mContext, VolleyListenerInterface.mListener, VolleyListenerInterface.mErrorListener){
+                    override fun onMySuccess(result: String?) {
+                        LogUtil.e(TAG!!, "日志随机数获取 = $result", true)
+                        result?.let {
+                            val tmp = Gson().fromJson(it, object :TypeToken<ScoreResponse<Map<String, String>>>(){}.type) as ScoreResponse<Map<String, String>>
+                            if(tmp.code == 200 && (tmp.data?.isEmpty() == false)){
+                                val rand = tmp.data!!["rand"]
+                                getList(page, rand!!)
+                            }
+                        }
+                    }
 
+                    override fun onMyError(error: VolleyError?) {
+                        LogUtil.e(TAG!!, "日志随机数获取错误 e = $error")
+                        refreshUtil.resetRefresh(page)
+                    }
+                },
+                false)
     }
 
     private fun getList(page :Int, rand :String){
-//        VolleyRequestUtil.RequestGet()
+        val params = "?pageIndex=$page&pageSize=$pageSize&address=${user?.address}&selfSign=${user?.address+rand}"
+        VolleyRequestUtil.RequestGet(mContext,
+                logHost+Constant.API.LOG_LIST+params,
+                "loginList",
+                object :VolleyListenerInterface(mContext, VolleyListenerInterface.mListener, VolleyListenerInterface.mErrorListener){
+                    override fun onMySuccess(result: String?) {
+                        LogUtil.e(TAG!!, "登录日志获取 result=$result", true)
+                        result?.let {
+                            val logList = Gson().fromJson(it, object :TypeToken<ScoreResponse<List<LogList>>>(){}.type) as ScoreResponse<List<LogList>>
+                            if(logList.code == 200 && !logList.data!!.isEmpty()){
+                                compare(logList.data!!, page)
+                            }else{
+                                if(!TextUtils.isEmpty(logList.msg))showToast(msg = logList.msg)
+                            }
+                        }
+                        refreshUtil.resetRefresh(page)
+                    }
+
+                    override fun onMyError(error: VolleyError?) {
+                        LogUtil.e(TAG!!, "登录日志获取错误 error= $error")
+                        refreshUtil.resetRefresh(page)
+                    }
+                },
+                false)
+    }
+
+    private fun compare(data: List<LogList>, page: Int){
+        var addData = ArrayList<LoginLogItem>(data.size)
+        val logDao = LocalDBManager(mContext!!).getTableOperation(LogOperaDao::class.java)
+        for(server in data){
+            val tmp = logDao.queryData(server)
+            if(tmp.isEmpty()){
+                addData.add(LoginLogItem(loginAccount = server.address, loginUrl = server.requestedAddress, sign = server.sign, state = true))
+            }else addData.addAll(tmp)
+        }
+        if(page == 1){
+            adapter = LoginLogAdapter(mContext!!, addData)
+            listView.adapter = adapter
+        }else{
+            adapter.addData(addData, false)
+        }
     }
 }

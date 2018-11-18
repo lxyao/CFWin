@@ -42,6 +42,8 @@ abstract class BaseFragment : Fragment(), View.OnClickListener{
      */
     override fun onClick(v: View?) {}
 
+    open fun onAlertView(v: View){}
+
     /**
      * 设置当前布局文件资源
      */

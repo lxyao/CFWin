@@ -232,7 +232,7 @@ class ScanResultActivity :SubBaseActivity() {
                                     val bean = LoginLogItem(map["Address"]!!, urlAddress, DateUtil.getCurrentDateTime(), sign)
                                     LocalDBManager(mContext).getTableOperation(LogOperaDao::class.java).insertLog(bean)
                                     result(Activity.RESULT_OK, it, urlAddress)
-                                }
+                                }else showToast(tmp.msg)
                             }
                         }
 

@@ -1,5 +1,6 @@
 package com.cfwin.cfwinblockchain.activity.mine.account
 
+import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
 import android.view.View
@@ -11,7 +12,9 @@ import com.cfwin.base.utils.LogUtil
 import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
+import com.cfwin.cfwinblockchain.activity.user.ADD_ACCOUNT
 import com.cfwin.cfwinblockchain.activity.user.CreateUserActivity
+import com.cfwin.cfwinblockchain.activity.user.ImportUserActivity
 import com.cfwin.cfwinblockchain.adapter.account.ManagerAdapter
 import com.cfwin.cfwinblockchain.beans.UserBean
 import com.cfwin.cfwinblockchain.beans.response.ScoreResponse
@@ -43,7 +46,7 @@ class ManagerActivity :SubBaseActivity() {
     }
 
     override fun initData() {
-        val accountData = LocalDBManager(this).getTableOperation(UserOperaDao::class.java).queryUser("")
+        val accountData = getAccount()
         adapter = ManagerAdapter(this, accountData)
         listview.adapter = adapter
         host = getServer(Constant.API.TYPE_SCORE)+Constant.API.ACCOUNT_MONEY
@@ -52,11 +55,20 @@ class ManagerActivity :SubBaseActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK && requestCode == 201){
+            val account = getAccount()
+            adapter.addData(account, true)
+            getAccountMoney(data?.getStringExtra("address")!!)
+        }
+    }
+
     override fun onClick(v: View?) {
         if(v?.id == R.id.toolbar_menu){
             //添加账户
-            startActivity(Intent(this, CreateUserActivity::class.java)
-                    .putExtra("isAdd", true))
+            startActivityForResult(Intent(this, ImportUserActivity::class.java)
+                    .putExtra("type", ADD_ACCOUNT), 201)
         }else super.onClick(v)
     }
 
@@ -64,6 +76,10 @@ class ManagerActivity :SubBaseActivity() {
     fun onItemClick(position: Int){
         startActivity(Intent(this, DetailActivity::class.java)
                 .putExtra("item", listview.adapter.getItem(position) as UserBean))
+    }
+
+    private fun getAccount(): MutableList<UserBean>{
+        return LocalDBManager(this).getTableOperation(UserOperaDao::class.java).queryUser("")
     }
 
     private fun getAccountMoney(address: String){

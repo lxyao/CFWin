@@ -26,7 +26,7 @@ abstract class AbsParentBaseActivity : BaseActivity() {
         return ""
     }
 
-    fun getUser(): UserBean {
+    open fun getUser(): UserBean {
         val info = mContext?.getSharedPreferences(Constant.configFileName, Context.MODE_PRIVATE)
                 ?.getString(Constant.CURRENT_ACCOUNT, "{}")
         return Gson().fromJson(info, UserBean::class.java)

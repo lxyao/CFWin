@@ -1,5 +1,6 @@
 package com.cfwin.cfwinblockchain.activity.mine.account
 
+import Decoder.BASE64Encoder
 import android.app.Activity
 import android.content.Intent
 import android.text.TextUtils
@@ -7,12 +8,25 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import butterknife.BindView
+import com.android.volley.VolleyError
+import com.cfwin.base.beans.CommissionInfo
+import com.cfwin.base.beans.TransactionCmd
+import com.cfwin.base.utils.DateUtil
 import com.cfwin.base.utils.LogUtil
+import com.cfwin.base.utils.encoded.EcKeyUtils
+import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
+import com.cfwin.cfwinblockchain.activity.user.ADD_IDENTIFY
+import com.cfwin.cfwinblockchain.activity.user.EC_DIR
+import com.cfwin.cfwinblockchain.activity.user.KEY_END_WITH
+import com.cfwin.cfwinblockchain.activity.user.WALLET_DIR
 import com.cfwin.cfwinblockchain.beans.UserBean
+import com.cfwin.cfwinblockchain.http.VolleyListenerInterface
+import com.cfwin.cfwinblockchain.http.VolleyRequestUtil
 import com.google.zxing.CaptureActivity
 import com.google.zxing.CaptureActivity.INTENT_EXTRA_KEY_QR_SCAN
+import org.web3j.crypto.Hash.sha256
 
 /**
  * 转赠界面
@@ -24,8 +38,11 @@ class PresentActivity :SubBaseActivity() {
     @BindView(R.id.remark)lateinit var remark: EditText
     @BindView(R.id.to_account)lateinit var toAccount: EditText
     @BindView(R.id.gas)lateinit var gas: EditText
+    private lateinit var pwdTxt: EditText
 
     private lateinit var item: UserBean
+    private lateinit var host: String
+    private val transactionCmd = TransactionCmd()
 
     override fun getLayoutId(): Int {
         return R.layout.activity_present
@@ -40,6 +57,7 @@ class PresentActivity :SubBaseActivity() {
     override fun initData() {
         item = intent.getParcelableExtra("item")
         score.text = item.integral
+        host = getServer(Constant.API.TYPE_SCORE)
     }
 
     override fun onClick(v: View?) {
@@ -53,6 +71,14 @@ class PresentActivity :SubBaseActivity() {
             R.id.sure->{
                 //转赠
                 checkInfo()
+            }
+            R.id.double_sure->{
+                val pwd = pwdTxt.text.toString().trim()
+                if(TextUtils.isEmpty(pwd)){
+                    showToast(getString(R.string.input_pwd_hint))
+                    return
+                }
+                sign(pwd, "$filesDir$WALLET_DIR")
             }
             else ->super.onClick(v)
         }
@@ -82,7 +108,120 @@ class PresentActivity :SubBaseActivity() {
             showToast("请输入对方账号！")
             return
         }
+        val gas = gas.text.toString().trim()
+        transactionCmd.Content.Init(item.address, account, num.toString(), "", DateUtil.getCurrentDateTime())
+        transactionCmd.Commission.Init("", item.address, gas, DateUtil.getCurrentDateTime())
+        if(item.type == ADD_IDENTIFY){
+            sign(null, "$filesDir$EC_DIR")
+        }else showDialog("转赠积分")
+    }
 
+    override fun onAlertView(v: View) {
+        pwdTxt = v.findViewById(R.id.input)
+    }
+
+    private fun sign(pwd: String?, dir: String){
+        val sb = StringBuffer().append(transactionCmd.Content.from)
+                .append(transactionCmd.Content.to)
+                .append(transactionCmd.Content.serial)
+                .append(transactionCmd.Content.balance)
+                .append(transactionCmd.Content.timestamp)
+        val prikeystr = EcKeyUtils.getPrivateKey(pwd, dir, "${item.address}$KEY_END_WITH")
+        var signContent = EcKeyUtils.signReturnBase64(prikeystr, sb.toString().toByteArray())
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        signContent = replacePlusAndSlash(signContent)
+        transactionCmd.SignContent.sign = signContent
+        val ss = sb.append(signContent).toString()
+        val hexStr = getHash(ss)
+        transactionCmd.Commission.hashTransaction = hexStr
+        val commission = StringBuffer().append(transactionCmd.Commission.hashTransaction)
+                .append(transactionCmd.Commission.payer)
+                .append(transactionCmd.Commission.gas)
+                .append(transactionCmd.Commission.commissionTimestamp)
+        ///////////////////////////////////////////////////////////////////////////////////////////
+        var signCommission = EcKeyUtils.signReturnBase64(prikeystr, commission.toString().toByteArray())
+        signCommission = replacePlusAndSlash(signCommission)
+        transactionCmd.SignCommision.sign = signCommission
+        val hashMap = HashMap<String, Any>()
+        val contentMap = object2Map(transactionCmd.Content)
+        val commissionMap = object2Map(transactionCmd.Commission)
+        hashMap.putAll(contentMap)
+        hashMap.putAll(commissionMap)
+        hashMap["fromSignature"] = transactionCmd.SignContent.sign
+        hashMap["payerSignature"] = transactionCmd.SignCommision.sign
+        if(item.type == ADD_IDENTIFY){
+            hashMap.remove("$"+"change")
+            hashMap.remove("serialVersionUID")
+        }
+        transaction(hashMap)
+    }
+
+    /**
+     * 将字符串中的+、/替换成-、_
+     * @param str
+     * @return
+     */
+    private fun replacePlusAndSlash(str: String): String {
+        var str = str
+        str = str.replace('+', '-')
+        str = str.replace('/', '_')
+        return str
+    }
+
+    /**
+     * 生成hash
+     * @param str
+     * @return
+     */
+    private fun getHash(str: String): String {
+        //生成 hash
+        val bytes = str.toByteArray()
+        //sha256
+        val data = sha256(bytes)
+        //base64
+        val enc = BASE64Encoder()
+        var hexStr = enc.encode(data)
+        hexStr = replacePlusAndSlash(hexStr)
+        return hexStr
+    }
+
+    /**
+     * 实体对象转成Map
+     * @param obj 实体对象
+     * @return
+     */
+    private fun object2Map(obj: Any?): HashMap<String, Any> {
+        val map = HashMap<String, Any>()
+        if (obj == null) {
+            return map
+        }
+        val clazz = obj.javaClass
+        val fields = clazz.declaredFields
+        try {
+            for (field in fields) {
+                field.isAccessible = true
+                map[field.name] = field.get(obj)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return map
+    }
+
+    private fun transaction(params: Map<String, Any>){
+        VolleyRequestUtil.RequestPost(this,
+                host+Constant.API.ACCOUNT_TRANS,
+                "transaction",
+                params,
+                object : VolleyListenerInterface(this, VolleyListenerInterface.mListener, VolleyListenerInterface.mErrorListener){
+                    override fun onMySuccess(result: String?) {
+                        LogUtil.e(TAG!!, "积分转赠 result= $result", true)
+                    }
+
+                    override fun onMyError(error: VolleyError?) {
+                        LogUtil.e(TAG!!, "积分转赠失败 error = $error")
+                    }
+                }, false)
     }
 
     private fun parseNum(str: String): Long{

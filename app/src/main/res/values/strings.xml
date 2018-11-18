@@ -52,4 +52,5 @@
     <string name="coll_gift">收礼</string>
     <string name="login_account_hint">建议：扫码登录使用身份名称账户登录</string>
     <string name="send_score">请输入转赠积分</string>
+    <string name="input_pwd_hint">请输入设置的密码</string>
 </resources>

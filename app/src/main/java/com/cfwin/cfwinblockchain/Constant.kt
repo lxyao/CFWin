@@ -51,7 +51,18 @@ object Constant {
          * 账户积分
          */
         const val ACCOUNT_MONEY = "/api/querybalance"
-
+        /**
+         * 账户历史记录
+         */
+        const val ACCOUNT_HISTORY = "/api/queryhistory"
+        /**
+         * 账户交易明细
+         */
+        const val ACCOUNT_TRANS_DETAIL = "/api/querytx"
+        /**
+         * 账户交易
+         */
+        const val ACCOUNT_TRANS = "/api/transaction"
         /**
          * 服务器地址类型 积分
          */

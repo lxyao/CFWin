@@ -14,5 +14,5 @@
         android:background="@color/white"
         android:layout_marginLeft="@dimen/dp_14"
         android:layout_marginRight="@dimen/dp_14"
-        android:hint="请输入设置的密码"/>
+        android:hint="@string/input_pwd_hint"/>
 </LinearLayout>

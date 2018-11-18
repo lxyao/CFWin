@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.cfwin.base.R
+import com.cfwin.base.activity.fragment.BaseFragment
 import com.cfwin.base.utils.ToastUtil
 
 /**
@@ -16,6 +17,7 @@ import com.cfwin.base.utils.ToastUtil
  */
 abstract class BaseActivity : BaseActivityApi23(), View.OnClickListener{
     protected var mContext: Context? = null
+    protected var baseFragment: BaseFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +38,11 @@ abstract class BaseActivity : BaseActivityApi23(), View.OnClickListener{
     /**
      * 点击事件回调
      */
-    override fun onClick(v: View?) {}
+    override fun onClick(v: View?) {
+        baseFragment?.let {
+            it.onClick(v)
+        }
+    }
 
     /**
      * 加载布局文件之前
@@ -141,7 +147,11 @@ abstract class BaseActivity : BaseActivityApi23(), View.OnClickListener{
     /**
      * 自定义对话框的内容布局回调
      */
-    open fun onAlertView(v: View){}
+    open fun onAlertView(v: View){
+        baseFragment?.let {
+            it.onAlertView(v)
+        }
+    }
 
     private fun setAlertClick(v: View, dialog: Dialog){
         v.setOnClickListener{

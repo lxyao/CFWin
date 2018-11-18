@@ -29,6 +29,7 @@
         android:layout_marginTop="145dp"/>
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/ll_star"
         style="@style/mine_ll"
         android:layout_marginTop="@dimen/dp_45"

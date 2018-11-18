@@ -10,6 +10,7 @@ open class ScoreResponse<T> : Parcelable{
 
     var msg:String = ""
     var result:String = ""
+    var code: Int = 0
     open var data: T?
 
     init {
@@ -37,6 +38,7 @@ open class ScoreResponse<T> : Parcelable{
         }
         msg = parcel.readString()
         result = parcel.readString()
+        code = parcel.readInt()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -58,6 +60,7 @@ open class ScoreResponse<T> : Parcelable{
         }
         parcel.writeString(msg)
         parcel.writeString(result)
+        parcel.writeInt(code)
     }
 
     override fun describeContents(): Int {

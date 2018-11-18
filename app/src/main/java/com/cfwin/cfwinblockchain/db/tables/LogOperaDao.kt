@@ -1,11 +1,13 @@
 package com.cfwin.cfwinblockchain.db.tables
 
 import android.content.ContentValues
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.text.TextUtils
 import com.cfwin.base.db.AbsTableOpera
 import com.cfwin.base.utils.LogUtil
 import com.cfwin.cfwinblockchain.beans.LoginLogItem
+import com.cfwin.cfwinblockchain.beans.response.log.LogList
 
 /**
  * 登录日志表操作对象
@@ -31,15 +33,30 @@ class LogOperaDao constructor(db: SQLiteDatabase) : AbsTableOpera(db){
         val c = query(null, "loginAccount = ? limit ${((page - 1) * pageSize)},$pageSize", arrayOf(address), null, null, null)
         c?.let {
             while (c.moveToNext()){
-                val bean = LoginLogItem(loginUrl = c.getString(c.getColumnIndex("loginUrl")),
-                        loginAccount = c.getString(c.getColumnIndex("loginAccount")),
-                        time = c.getString(c.getColumnIndex("loginTime")),
-                        sign = c.getString(c.getColumnIndex("sign")))
-                data.add(bean)
+                data.add(getLogItem(c))
             }
             it.close()
         }
         return data
+    }
+
+    fun queryData(logList: LogList): MutableList<LoginLogItem>{
+        val data = ArrayList<LoginLogItem>()
+        val c = query(null, "loginAccount = ? and loginUrl = ? and sign = ?", arrayOf(logList.address, logList.requestedAddress, logList.sign), null, null, null)
+        c?.let {
+            while (c.moveToNext()){
+                data.add(getLogItem(c))
+            }
+            it.close()
+        }
+        return data
+    }
+
+    private fun getLogItem(c: Cursor):LoginLogItem{
+        return LoginLogItem(loginUrl = c.getString(c.getColumnIndex("loginUrl")),
+                loginAccount = c.getString(c.getColumnIndex("loginAccount")),
+                time = c.getString(c.getColumnIndex("loginTime")),
+                sign = c.getString(c.getColumnIndex("sign")))
     }
 
 }

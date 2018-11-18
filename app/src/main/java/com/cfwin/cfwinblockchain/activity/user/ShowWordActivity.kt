@@ -15,6 +15,7 @@ class ShowWordActivity : SubBaseActivity() {
 
     @BindView(R.id.login_word)lateinit var loginWord: TextView
     @BindView(R.id.wallet_word)lateinit var walletWord: TextView
+    private var isShow = false
 
     override fun getLayoutId(): Int {
         return R.layout.activity_show_word
@@ -28,11 +29,14 @@ class ShowWordActivity : SubBaseActivity() {
         val words = intent.getStringArrayExtra("words")
         loginWord.text = words[0]
         walletWord.text = words[1]
+        isShow = intent.getBooleanExtra("isShow", false)
     }
 
     override fun onClick(v: View?) {
         if(v?.id == R.id.complete){
-            startActivity(Intent(this, MainActivity::class.java))
+            if(!isShow){
+                startActivity(Intent(this, MainActivity::class.java))
+            }
             finish()
         }else super.onClick(v)
     }

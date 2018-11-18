@@ -2,13 +2,17 @@ package com.cfwin.cfwinblockchain.activity.mine.account
 
 import android.content.Intent
 import android.support.v4.view.ViewPager
+import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import butterknife.BindView
 import butterknife.OnClick
+import com.cfwin.base.utils.encoded.EcKeyUtils
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
 import com.cfwin.cfwinblockchain.activity.mine.account.fragment.*
+import com.cfwin.cfwinblockchain.activity.user.*
 import com.cfwin.cfwinblockchain.adapter.HomePageAdapter
 import com.cfwin.cfwinblockchain.beans.AccountItem
 import com.cfwin.cfwinblockchain.beans.UserBean
@@ -21,6 +25,7 @@ class DetailActivity :SubBaseActivity(), ViewPager.OnPageChangeListener{
     @BindView(R.id.viewPager)lateinit var viewPager: ViewPager
     @BindView(R.id.tabLine)lateinit var tabLine: View
     private lateinit var item: UserBean
+    private var pwdTxt: EditText? = null
 
     /**
      * 下划线最大宽度
@@ -29,6 +34,10 @@ class DetailActivity :SubBaseActivity(), ViewPager.OnPageChangeListener{
 
     override fun getLayoutId(): Int {
         return R.layout.activity_account_detail
+    }
+
+    override fun getUser(): UserBean {
+        return item
     }
 
     override fun initView() {
@@ -54,6 +63,10 @@ class DetailActivity :SubBaseActivity(), ViewPager.OnPageChangeListener{
 
     override fun onPageSelected(p0: Int) {
         callocation(p0)
+    }
+
+    override fun onAlertView(v: View) {
+        pwdTxt = v.findViewById(R.id.input)
     }
 
     @OnClick(R.id.tabAll, R.id.tabOut, R.id.tabIn, R.id.tabFailed, R.id.show_account, R.id.change_score)
@@ -90,8 +103,33 @@ class DetailActivity :SubBaseActivity(), ViewPager.OnPageChangeListener{
                 showDialog(title = "查看助记词", contentId = R.layout.show_alert_input)
                         .setCanceledOnTouchOutside(false)
             }
+            R.id.double_sure->{
+                showWord()
+            }
             else ->super.onClick(v)
         }
+    }
+
+    private fun showWord(){
+        val pwd = pwdTxt?.text.toString().trim()
+        if(TextUtils.isEmpty(pwd)){
+            showToast(getString(R.string.input_pwd_hint))
+            return
+        }
+        //确定显示
+        val word = if(item.type == ADD_IDENTIFY)
+            EcKeyUtils.getMnemonic(pwd,"$filesDir$EC_DIR" , "${item.address}$WORD_END_WITH")
+        else{
+            EcKeyUtils.getMnemonic(pwd,"$filesDir$WALLET_DIR" , "${item.address}$WORD_END_WITH")
+        }
+        if(TextUtils.isEmpty(word)){
+            showToast("密码输入错误！")
+            return
+        }
+        val words = if(item.type == ADD_IDENTIFY)arrayOf(word, "") else arrayOf("", word)
+        startActivity(Intent(this, ShowWordActivity::class.java)
+                .putExtra("words", words)
+                .putExtra("isShow", true))
     }
 
     private fun callocation(position: Int){

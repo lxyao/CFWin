@@ -41,9 +41,11 @@ class Api23Util(val context :Activity, val callback :IPermissionGrantCallback){
             }
             if(!tmpPermission.isEmpty()){
                 initPermissionText()
-                context?.requestPermissions(tmpPermission.toTypedArray(), mPermissionCode)
+                context.requestPermissions(tmpPermission.toTypedArray(), mPermissionCode)
+                return
             }
-        }else callback.permissionGrant(mPermissionCode, permission)
+        }
+        callback.permissionGrant(mPermissionCode, permission)
     }
 
     /**
