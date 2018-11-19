@@ -27,15 +27,16 @@ class UserOperaDao constructor(db: SQLiteDatabase) : AbsTableOpera(db) {
         LogUtil.e(TAG, "插入成功 id=$id")
     }
 
-    fun updateIntegral(num: Long, address: String){
-        val result= query(arrayOf("integral"), "address = '$address'", null)
-        if(result != null && result.isNotEmpty()){
-            val tmp = if(TextUtils.isEmpty(result[0][0]) || result[0][0] == "0.0")"0" else result[0][0]
-            val values = ContentValues()
-            values.put("integral", tmp.toLong()+ num)
-            val index = update(values, "address = '$address'", null)
-            LogUtil.e(TAG, "修改积分 index = $index")
-        }
+    fun updateIntegral(num: String, serial: Int, address: String){
+        val values = ContentValues()
+        values.put("integral", num)
+        values.put("serial", serial)
+        val index = update(values, "address = '$address'", null)
+        LogUtil.e(TAG, "修改积分 index = $index")
+//        val result= query(arrayOf("integral"), "address = '$address'", null)
+//        if(result != null && result.isNotEmpty()){
+//            val tmp = if(TextUtils.isEmpty(result[0][0]) || result[0][0] == "0.0")"0" else result[0][0]
+//        }
     }
 
     fun queryUser(accountName: String= ""): MutableList<UserBean>{
@@ -50,7 +51,8 @@ class UserOperaDao constructor(db: SQLiteDatabase) : AbsTableOpera(db) {
                         accountName = c.getString(c.getColumnIndex("accountName")),
                         address = c.getString(c.getColumnIndex("address")),
                         integral = c.getString(c.getColumnIndex("integral")),
-                        type = c.getInt(c.getColumnIndex("type")))
+                        type = c.getInt(c.getColumnIndex("type")),
+                        serial = c.getInt(c.getColumnIndex("serial")))
                 data.add(bean)
             }
             it.close()

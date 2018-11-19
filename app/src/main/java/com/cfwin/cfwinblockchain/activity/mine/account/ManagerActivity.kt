@@ -13,7 +13,6 @@ import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
 import com.cfwin.cfwinblockchain.activity.user.ADD_ACCOUNT
-import com.cfwin.cfwinblockchain.activity.user.CreateUserActivity
 import com.cfwin.cfwinblockchain.activity.user.ImportUserActivity
 import com.cfwin.cfwinblockchain.adapter.account.ManagerAdapter
 import com.cfwin.cfwinblockchain.beans.UserBean
@@ -94,17 +93,23 @@ class ManagerActivity :SubBaseActivity() {
                             val balance = Gson().fromJson(it, object :TypeToken<ScoreResponse<Map<String, String>>>(){}.type) as ScoreResponse<Map<String, String>>
                             if(balance.result == balance.STATE_SUCCESS){
                                 var money = balance.data!!["balance"]
+                                var serial = balance.data!!["serial"]
                                 if(TextUtils.isEmpty(money))money = "0"
-                                adapter.updateBalance(UserBean(userName = "",accountName = "", address = address, integral = money!!))
+                                val tmpMoney = money?.toLong()!!
+                                if(tmpMoney > 0){
+                                    money = "${tmpMoney /Math.pow(10.0, 8.0)}"
+                                }
+                                if(TextUtils.isEmpty(serial))serial = "0"
+                                adapter.updateBalance(UserBean(userName = "",accountName = "", address = address, integral = money!!, serial = serial!!.toInt()))
                                 //修改本地数据库信息
-                                LocalDBManager(mContext).getTableOperation(UserOperaDao::class.java).updateIntegral(money.toLong(), address)
+                                LocalDBManager(mContext).getTableOperation(UserOperaDao::class.java).updateIntegral(money, serial!!.toInt(), address)
                             }
                         }
                     }
 
                     override fun onMyError(error: VolleyError?) {
                         val index = address.length shr 1
-                        LogUtil.e(TAG!!, "账户信息失败 e= ${error.toString()} address=${address.substring(index)}")
+                        LogUtil.e(TAG!!, "账户信息失败 e= $error address=${address.substring(index)}")
                     }
                 },
                 false)

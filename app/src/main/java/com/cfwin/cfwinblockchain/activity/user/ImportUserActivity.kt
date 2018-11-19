@@ -10,6 +10,7 @@ import butterknife.BindView
 import butterknife.OnCheckedChanged
 import com.cfwin.base.utils.PatternUtil
 import com.cfwin.base.weak.AbsWeakContext
+import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
 import com.cfwin.cfwinblockchain.activity.home.MainActivity
@@ -99,8 +100,13 @@ class ImportUserActivity : SubBaseActivity() {
                         var bean = UserBean(userName = "MY01", accountName = "MYACCOUNT01", address = address!!, type = wordType)
                         val userDao= LocalDBManager(it).getTableOperation(UserOperaDao::class.java)
                         userDao.insertUser(bean)
-                        if(wordType == ADD_IDENTIFY)
+                        if(wordType == ADD_IDENTIFY){
+                            getSharedPreferences(Constant.configFileName, MODE_PRIVATE)
+                                    .edit()
+                                    .putBoolean(Constant.isFirstUse, false)
+                                    .apply()
                             it.startActivity(Intent(it, MainActivity::class.java))
+                        }
                         else if(wordType == ADD_ACCOUNT){
                             it.setResult(Activity.RESULT_OK, Intent()
                                     .putExtra("address", address))

@@ -208,11 +208,13 @@ class ScanResultActivity :SubBaseActivity() {
         val startWith = getString(R.string.item_append, getString(R.string.login_url), "")
         urlAddress = urlAddress.replaceFirst(startWith, "")
         analyzeUrl(urlAddress)
+        val confirmBtn = findViewById<TextView>(R.id.confirm)
         try {
             val prikeystr = EcKeyUtils.getPrivateKey(pwd,  "$filesDir$dir",  "${map["Address"]}$KEY_END_WITH")
             val sign = EcKeyUtils.signReturnHexString(prikeystr, urlAddress.toByteArray())
             map["ECSign"] = sign
             val index = urlAddress.indexOf("?")
+            confirmBtn.isEnabled = false
             VolleyRequestUtil.RequestPost(this,
                     urlAddress.substring(0, if(index > 0)index else urlAddress.length),
                     "login",
@@ -234,16 +236,19 @@ class ScanResultActivity :SubBaseActivity() {
                                     result(Activity.RESULT_OK, it, urlAddress)
                                 }else showToast(tmp.msg)
                             }
+                            confirmBtn.isEnabled = true
                         }
 
                         override fun onMyError(error: VolleyError?) {
                             LogUtil.e(TAG!!, "错误信息 e=${error.toString()}")
                             result(Activity.RESULT_CANCELED, error.toString(), urlAddress)
+                            confirmBtn.isEnabled = true
                         }
                     },
                     false)
         } catch (e: Exception){
             showToast("error:loginById")
+            confirmBtn.isEnabled = true
         }
     }
 

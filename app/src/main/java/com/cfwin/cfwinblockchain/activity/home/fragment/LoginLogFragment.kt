@@ -8,15 +8,16 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
 import butterknife.BindView
+import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.baison.common.utils.BaseRefreshUtil
 import com.cfwin.base.utils.LogUtil
+import com.cfwin.base.utils.encoded.EcKeyUtils
 import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.AbsParentBaseActivity
 import com.cfwin.cfwinblockchain.activity.SubBaseFragment
-import com.cfwin.cfwinblockchain.activity.user.ADD_ACCOUNT
-import com.cfwin.cfwinblockchain.activity.user.ADD_IDENTIFY
+import com.cfwin.cfwinblockchain.activity.user.*
 import com.cfwin.cfwinblockchain.adapter.LoginLogAdapter
 import com.cfwin.cfwinblockchain.beans.LoginLogItem
 import com.cfwin.cfwinblockchain.beans.UserBean
@@ -24,6 +25,7 @@ import com.cfwin.cfwinblockchain.beans.response.ScoreResponse
 import com.cfwin.cfwinblockchain.beans.response.log.LogList
 import com.cfwin.cfwinblockchain.db.LocalDBManager
 import com.cfwin.cfwinblockchain.db.tables.LogOperaDao
+import com.cfwin.cfwinblockchain.http.JsonVolleyUtil
 import com.cfwin.cfwinblockchain.http.VolleyListenerInterface
 import com.cfwin.cfwinblockchain.http.VolleyRequestUtil
 import com.cfwin.cfwinblockchain.utils.UrlSignUtil
@@ -51,7 +53,8 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
     private val pageSize = Constant.PAGE_SIZE
     private lateinit var logHost: String
     private var user: UserBean? = null
-    private lateinit var logSign: String
+    private var pwdTxt: EditText? = null
+    private lateinit var dir: String
 
     override fun getLayoutId(): Int {
         return R.layout.fragment_loginlog
@@ -74,7 +77,13 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
             user = tmp.getUser()
             logHost = tmp.getServer(Constant.API.TYPE_LOG)
             if(TextUtils.isEmpty(user?.address))user?.address = ""
-            onPullDownRefresh()
+            if(user?.type == ADD_IDENTIFY){
+                dir = "${mContext?.filesDir}$EC_DIR"
+                onPullDownRefresh()
+            }else{
+                dir = "${mContext?.filesDir}$WALLET_DIR"
+                tmp.showDialog("查看日志")
+            }
         }
     }
 
@@ -92,11 +101,27 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
         return refreshUtil
     }
 
+    override fun onAlertView(v: View) {
+        pwdTxt = v.findViewById(R.id.input)
+    }
+
+    override fun onClick(v: View?) {
+        if(v?.id == R.id.double_sure){
+            val pwd = pwdTxt?.text.toString().trim()
+            if(TextUtils.isEmpty(pwd)){
+                showToast(msg = getString(R.string.input_pwd_hint))
+                return
+            }
+            onPullDownRefresh()
+        }else
+            super.onClick(v)
+    }
+
     private fun getRand(){
-        VolleyRequestUtil.RequestPost(mContext,
+        JsonVolleyUtil.request(mContext!!,
                 logHost+Constant.API.LOG_RAND,
                 "loginRand",
-                mapOf("address" to user?.address),
+                 "{\"address\":\"${user?.address}\"}",
                 object :VolleyListenerInterface(mContext, VolleyListenerInterface.mListener, VolleyListenerInterface.mErrorListener){
                     override fun onMySuccess(result: String?) {
                         LogUtil.e(TAG!!, "日志随机数获取 = $result", true)
@@ -118,8 +143,10 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
     }
 
     private fun getList(page :Int, rand :String){
-        val params = "?pageIndex=$page&pageSize=$pageSize&address=${user?.address}&selfSign=${user?.address+rand}"
-        VolleyRequestUtil.RequestGet(mContext,
+        val pwd = if(pwdTxt == null)null else pwdTxt?.text.toString().trim()
+        val selfSign = UrlSignUtil.signTrans(pwd, dir, "${user?.address}$KEY_END_WITH", (user?.address+rand).toByteArray())
+        val params = "?pageIndex=$page&pageSize=$pageSize&address=${user?.address}&selfSign=$selfSign"
+        VolleyRequestUtil.RequestGet(mContext!!,
                 logHost+Constant.API.LOG_LIST+params,
                 "loginList",
                 object :VolleyListenerInterface(mContext, VolleyListenerInterface.mListener, VolleyListenerInterface.mErrorListener){
@@ -142,6 +169,7 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
                     }
                 },
                 false)
+        //Request.Method.GET
     }
 
     private fun compare(data: List<LogList>, page: Int){

@@ -7,7 +7,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import butterknife.BindView
 import com.cfwin.base.adapter.ImplBaseAdapter
-import com.cfwin.base.utils.LogUtil
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.adapter.SubBaseViewHolder
 import com.cfwin.cfwinblockchain.beans.UserBean
@@ -24,13 +23,14 @@ class ManagerAdapter constructor(context: Context, data: MutableList<UserBean>)
 
     fun updateBalance(bean: UserBean){
         for(user in data){
-            if(bean.address == bean.address){
-                user.integral = try {
-                    "${(user.integral.toLong() + bean.integral.toLong())}"
-                }catch (e: Exception){
-                    LogUtil.e("ManagerAdapter", "金额转换异常 e= ${e.localizedMessage}")
-                    "0"
-                }
+            if(bean.address == user.address){
+                user.integral = bean.integral
+//                try {
+//                    "${}"
+//                }catch (e: Exception){
+//                    LogUtil.e("ManagerAdapter", "金额转换异常 e= ${e.localizedMessage}")
+//                    "0"
+//                }
 //                user.integral = DecimalFormat("#.00").format(user.integral)
                 break
             }

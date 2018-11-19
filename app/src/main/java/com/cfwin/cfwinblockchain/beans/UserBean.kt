@@ -8,7 +8,8 @@ data class UserBean(var _id:Int = -1,
                     var accountName:String,
                     var address:String,
                     var integral:String = "0",
-                    var type:Int = 0) : Parcelable{
+                    var type:Int = 0,
+                    var serial:Int = 0) : Parcelable{
 
     protected constructor(parcel: Parcel) : this(
             parcel.readInt(),
@@ -16,6 +17,7 @@ data class UserBean(var _id:Int = -1,
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
+            parcel.readInt(),
             parcel.readInt()) {
     }
 
@@ -26,6 +28,7 @@ data class UserBean(var _id:Int = -1,
         parcel.writeString(address)
         parcel.writeString(integral)
         parcel.writeInt(type)
+        parcel.writeInt(serial)
     }
 
     override fun describeContents(): Int {

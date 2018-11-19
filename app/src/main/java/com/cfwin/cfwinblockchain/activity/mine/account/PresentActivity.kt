@@ -9,11 +9,9 @@ import android.widget.EditText
 import android.widget.TextView
 import butterknife.BindView
 import com.android.volley.VolleyError
-import com.cfwin.base.beans.CommissionInfo
 import com.cfwin.base.beans.TransactionCmd
 import com.cfwin.base.utils.DateUtil
 import com.cfwin.base.utils.LogUtil
-import com.cfwin.base.utils.encoded.EcKeyUtils
 import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
@@ -24,6 +22,8 @@ import com.cfwin.cfwinblockchain.activity.user.WALLET_DIR
 import com.cfwin.cfwinblockchain.beans.UserBean
 import com.cfwin.cfwinblockchain.http.VolleyListenerInterface
 import com.cfwin.cfwinblockchain.http.VolleyRequestUtil
+import com.cfwin.cfwinblockchain.utils.UrlSignUtil
+import com.cfwin.cfwinblockchain.utils.UrlSignUtil.replacePlusAndSlash
 import com.google.zxing.CaptureActivity
 import com.google.zxing.CaptureActivity.INTENT_EXTRA_KEY_QR_SCAN
 import org.web3j.crypto.Hash.sha256
@@ -109,7 +109,7 @@ class PresentActivity :SubBaseActivity() {
             return
         }
         val gas = gas.text.toString().trim()
-        transactionCmd.Content.Init(item.address, account, num.toString(), "", DateUtil.getCurrentDateTime())
+        transactionCmd.Content.Init(item.address, account, num.toString(), "${item.serial}", DateUtil.getCurrentDateTime())
         transactionCmd.Commission.Init("", item.address, gas, DateUtil.getCurrentDateTime())
         if(item.type == ADD_IDENTIFY){
             sign(null, "$filesDir$EC_DIR")
@@ -126,12 +126,14 @@ class PresentActivity :SubBaseActivity() {
                 .append(transactionCmd.Content.serial)
                 .append(transactionCmd.Content.balance)
                 .append(transactionCmd.Content.timestamp)
-        val prikeystr = EcKeyUtils.getPrivateKey(pwd, dir, "${item.address}$KEY_END_WITH")
-        var signContent = EcKeyUtils.signReturnBase64(prikeystr, sb.toString().toByteArray())
-        ///////////////////////////////////////////////////////////////////////////////////////////
-        signContent = replacePlusAndSlash(signContent)
-        transactionCmd.SignContent.sign = signContent
-        val ss = sb.append(signContent).toString()
+//        val prikeystr = EcKeyUtils.getPrivateKey(pwd, dir, "${item.address}$KEY_END_WITH")
+//        var signContent = EcKeyUtils.signReturnBase64(prikeystr, sb.toString().toByteArray())
+//        ///////////////////////////////////////////////////////////////////////////////////////////
+//        signContent = replacePlusAndSlash(signContent)
+//        transactionCmd.SignContent.sign = signContent
+//        val ss = sb.append(signContent).toString()
+        transactionCmd.SignContent.sign = UrlSignUtil.signTrans(pwd, dir, "${item.address}$KEY_END_WITH", sb.toString().toByteArray())
+        val ss = sb.append(transactionCmd.SignContent.sign).toString()
         val hexStr = getHash(ss)
         transactionCmd.Commission.hashTransaction = hexStr
         val commission = StringBuffer().append(transactionCmd.Commission.hashTransaction)
@@ -139,9 +141,9 @@ class PresentActivity :SubBaseActivity() {
                 .append(transactionCmd.Commission.gas)
                 .append(transactionCmd.Commission.commissionTimestamp)
         ///////////////////////////////////////////////////////////////////////////////////////////
-        var signCommission = EcKeyUtils.signReturnBase64(prikeystr, commission.toString().toByteArray())
-        signCommission = replacePlusAndSlash(signCommission)
-        transactionCmd.SignCommision.sign = signCommission
+//        var signCommission = EcKeyUtils.signReturnBase64(prikeystr, commission.toString().toByteArray())
+//        signCommission = replacePlusAndSlash(signCommission)
+        transactionCmd.SignCommision.sign = UrlSignUtil.signTrans(pwd, dir, "${item.address}$KEY_END_WITH", commission.toString().toByteArray())
         val hashMap = HashMap<String, Any>()
         val contentMap = object2Map(transactionCmd.Content)
         val commissionMap = object2Map(transactionCmd.Commission)
@@ -156,17 +158,17 @@ class PresentActivity :SubBaseActivity() {
         transaction(hashMap)
     }
 
-    /**
-     * 将字符串中的+、/替换成-、_
-     * @param str
-     * @return
-     */
-    private fun replacePlusAndSlash(str: String): String {
-        var str = str
-        str = str.replace('+', '-')
-        str = str.replace('/', '_')
-        return str
-    }
+//    /**
+//     * 将字符串中的+、/替换成-、_
+//     * @param str
+//     * @return
+//     */
+//    private fun replacePlusAndSlash(str: String): String {
+//        var str = str
+//        str = str.replace('+', '-')
+//        str = str.replace('/', '_')
+//        return str
+//    }
 
     /**
      * 生成hash
@@ -224,12 +226,12 @@ class PresentActivity :SubBaseActivity() {
                 }, false)
     }
 
-    private fun parseNum(str: String): Long{
+    private fun parseNum(str: String): Double{
         return try{
-            str.toLong()
+            str.toDouble()
         }catch (e: NumberFormatException){
             LogUtil.e(TAG!!, "积分转换失败 e= ${e.localizedMessage}")
-            0L
+            0.0
         }
     }
 }

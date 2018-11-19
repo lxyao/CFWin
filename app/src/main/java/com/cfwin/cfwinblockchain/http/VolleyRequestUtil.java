@@ -1,15 +1,22 @@
 package com.cfwin.cfwinblockchain.http;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.cfwin.base.App;
 import com.cfwin.cfwinblockchain.MyApplication;
 import com.cfwin.cfwinblockchain.MyApplicationKt;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 public class VolleyRequestUtil {
@@ -68,6 +75,11 @@ public class VolleyRequestUtil {
             protected Map getParams() throws AuthFailureError {
                 return params;
             }
+
+            @Override
+            public String getBodyContentType() {
+                return super.getBodyContentType();
+            }
         };
         // 为当前请求添加标记
         stringRequest.setTag(tag);
@@ -78,4 +90,5 @@ public class VolleyRequestUtil {
         // 将当前请求添加到请求队列中
         MyApplicationKt.getQueue().add(stringRequest);
     }
+
 }

@@ -36,7 +36,7 @@ class ServiceAddressActivity :SubBaseActivity() {
 
     override fun initData() {
         serverApi = getSharedPreferences(Constant.configFileName, Context.MODE_PRIVATE)
-                .getStringSet(Constant.SERVICE_API, LinkedHashSet())
+                .getStringSet(Constant.SERVICE_API, setOf("0,http://40.73.116.190:8080","1,http://40.73.96.49:8082","2,http://42.159.95.0:8080"))
         for (str in serverApi.toTypedArray()){
             val tmp = str.split(",")
             when (tmp[0].toInt()) {
