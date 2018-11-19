@@ -13,7 +13,7 @@ import com.cfwin.cfwinblockchain.beans.AccountUseItem
 /**
  * 账户详细使用情况数据
  */
-class DetailAdapter constructor(context: Context, data: MutableList<AccountUseItem>):ImplBaseAdapter<AccountUseItem>(context, data) {
+class DetailAdapter constructor(context: Context, data: MutableList<AccountUseItem>, val title: String = ""):ImplBaseAdapter<AccountUseItem>(context, data) {
     override fun getLayoutId(position: Int): Int {
         return R.layout.list_item_detail
     }
@@ -30,13 +30,16 @@ class DetailAdapter constructor(context: Context, data: MutableList<AccountUseIt
     override fun <B : BaseViewHolder> showView(position: Int, holder: B) {
         val tmpHolder = holder as ViewHolder
         val item = data[position]
-        if(item.state){
+        tmpHolder.title.text = title
+        tmpHolder.time.text = item.time
+        tmpHolder.num.text = item.num
+        if(item.state == 1){
             tmpHolder.img.setImageResource(R.mipmap.ic_change_success)
             tmpHolder.img.visibility = View.VISIBLE
-        }else{
+        }else if(item.state == 2){
             tmpHolder.img.setImageResource(R.mipmap.ic_change_failed)
-            tmpHolder.img.visibility = View.INVISIBLE
-        }
+            tmpHolder.img.visibility = View.VISIBLE
+        }else tmpHolder.img.visibility = View.INVISIBLE
     }
 
     class ViewHolder(v: View, resId: Int) :SubBaseViewHolder(v, resId){

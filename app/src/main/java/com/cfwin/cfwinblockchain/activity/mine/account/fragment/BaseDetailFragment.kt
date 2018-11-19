@@ -43,7 +43,7 @@ open class BaseDetailFragment :SubBaseFragment(), BaseRefreshUtil.IRefreshCallba
     }
 
     override fun initData() {
-        val tmp = listOf(AccountUseItem(state = false), AccountUseItem(state = true), AccountUseItem(state = true))
+        val tmp = listOf(AccountUseItem(state = 0, fromAccount = "", toAccount = ""), AccountUseItem(state = 1, fromAccount = "", toAccount = ""), AccountUseItem(state = 2, fromAccount = "", toAccount = ""))
         listView.adapter = DetailAdapter(mContext!!, tmp as MutableList<AccountUseItem>)
     }
 

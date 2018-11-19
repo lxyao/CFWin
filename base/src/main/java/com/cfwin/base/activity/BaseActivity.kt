@@ -111,7 +111,7 @@ abstract class BaseActivity : BaseActivityApi23(), View.OnClickListener{
     /**
      * 显示自定义对话框
      */
-    open fun showDialog(title: String, contentId: Int = 0, isDoubleBtn: Boolean = true): Dialog{
+    open fun showDialog(title: String, contentId: Int = 0, isDoubleBtn: Boolean = true, type: Int = 0): Dialog{
         val dialog = Dialog(this, R.style.dialog)
         val contentView = layoutInflater.inflate(R.layout.base_alert, null, false)
         val titleText : TextView = contentView.findViewById(R.id.alertTitle)
@@ -127,12 +127,12 @@ abstract class BaseActivity : BaseActivityApi23(), View.OnClickListener{
         if(!isDoubleBtn){
             llBtn.visibility = View.INVISIBLE
             sigleBtn.visibility = View.VISIBLE
-            setAlertClick(sigleBtn, dialog)
+            setAlertClick(sigleBtn, dialog, type)
         }else{
             llBtn.visibility = View.VISIBLE
             sigleBtn.visibility = View.INVISIBLE
-            setAlertClick(contentView.findViewById(R.id.double_sure), dialog)
-            setAlertClick(contentView.findViewById(R.id.double_cancel), dialog)
+            setAlertClick(contentView.findViewById(R.id.double_sure), dialog, type)
+            setAlertClick(contentView.findViewById(R.id.double_cancel), dialog, type)
         }
         dialog.setContentView(contentView)
         dialog.show()
@@ -153,10 +153,11 @@ abstract class BaseActivity : BaseActivityApi23(), View.OnClickListener{
         }
     }
 
-    private fun setAlertClick(v: View, dialog: Dialog){
+    private fun setAlertClick(v: View, dialog: Dialog, type: Int){
         v.setOnClickListener{
             dialog.dismiss()
             onClick(it)
         }
+        v.contentDescription = "$type"
     }
 }

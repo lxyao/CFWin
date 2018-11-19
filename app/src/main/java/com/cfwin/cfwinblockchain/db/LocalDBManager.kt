@@ -15,6 +15,8 @@ class LocalDBManager constructor(context: Context) : AbsDBManager(context, Const
         db?.execSQL(userSql)
         val logSql = "create table if not exists login_log(_id INTEGER PRIMARY KEY AUTOINCREMENT, loginUrl text, loginAccount nvarchar(100), loginTime nvarchar(35), sign text)"
         db?.execSQL(logSql)
+        val transInfoSql = "create table if not exists transInfo(_id INTEGER PRIMARY KEY AUTOINCREMENT,tx_id text, fromAccount text, toAccount text, integral nvarchar(12), transTime varchar(25), transState int)"
+        db?.execSQL(transInfoSql)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -29,6 +31,10 @@ class LocalDBManager constructor(context: Context) : AbsDBManager(context, Const
         if(oldVersion < 4){
             val userSql = "alter table user add column serial int"
             db?.execSQL(userSql)
+        }
+        if(newVersion > 4){
+            val transInfoSql = "create table if not exists transInfo(_id INTEGER PRIMARY KEY AUTOINCREMENT,tx_id text, fromAccount text, toAccount text, integral nvarchar(12), transTime varchar(25), transState int)"
+            db?.execSQL(transInfoSql)
         }
 
     }

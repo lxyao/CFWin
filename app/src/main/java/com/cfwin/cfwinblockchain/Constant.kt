@@ -28,7 +28,7 @@ object Constant {
     /**
      * 数据库版本号
      */
-    const val DB_VERSION = 4
+    const val DB_VERSION = 6
 
     object API{
         /**

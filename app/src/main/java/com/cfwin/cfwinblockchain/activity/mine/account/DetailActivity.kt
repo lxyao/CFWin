@@ -100,11 +100,12 @@ class DetailActivity :SubBaseActivity(), ViewPager.OnPageChangeListener{
             }
             R.id.toolbar_menu-> {
                 //显示助记词
-                showDialog(title = "查看助记词", contentId = R.layout.show_alert_input)
+                showDialog(title = "查看助记词", contentId = R.layout.show_alert_input, type = 1)
                         .setCanceledOnTouchOutside(false)
             }
             R.id.double_sure->{
-                showWord()
+                if(v.contentDescription.toString().toInt() == 1)
+                    showWord()
             }
             else ->super.onClick(v)
         }
