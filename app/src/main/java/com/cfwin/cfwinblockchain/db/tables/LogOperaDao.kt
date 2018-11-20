@@ -42,7 +42,7 @@ class LogOperaDao constructor(db: SQLiteDatabase) : AbsTableOpera(db){
 
     fun queryData(logList: LogList): MutableList<LoginLogItem>{
         val data = ArrayList<LoginLogItem>()
-        val c = query(null, "loginAccount = ? and loginUrl = ? and sign = ?", arrayOf(logList.address, logList.requestedAddress, logList.sign), null, null, null)
+        val c = query(null, "loginAccount = ? and loginUrl = ? and sign = ?", arrayOf(logList.address, logList.loginUrl, logList.sign), null, null, null)
         c?.let {
             while (c.moveToNext()){
                 data.add(getLogItem(c))

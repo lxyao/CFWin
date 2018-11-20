@@ -1,5 +1,6 @@
 package com.cfwin.base.utils.encoded;
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.subgraph.orchid.encoders.Hex;
@@ -291,6 +292,12 @@ public class EcKeyUtils {
         byte[] signdata = EcSignUtil.signData(data, prvatekey);
         BASE64Encoder base64Encoder = new BASE64Encoder();
         return base64Encoder.encode(signdata);
+    }
+
+    public static String signReturnBase64Url(String privkey, byte[] data) throws Exception {
+        ECPrivateKey prvatekey = EcKeyUtils.getEcPrivateKeyFromHex(privkey);
+        byte[] signdata = EcSignUtil.signData(data, prvatekey);
+        return Base64.encodeToString(signdata, Base64.URL_SAFE|Base64.NO_WRAP);
     }
 
     /**

@@ -2,26 +2,27 @@ package com.cfwin.cfwinblockchain.activity.home.fragment
 
 import android.support.v7.widget.Toolbar
 import android.text.TextUtils
-import android.view.TextureView
 import android.view.View
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
 import butterknife.BindView
-import com.android.volley.Request
 import com.android.volley.VolleyError
 import com.baison.common.utils.BaseRefreshUtil
 import com.cfwin.base.utils.LogUtil
-import com.cfwin.base.utils.encoded.EcKeyUtils
 import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.AbsParentBaseActivity
 import com.cfwin.cfwinblockchain.activity.SubBaseFragment
-import com.cfwin.cfwinblockchain.activity.user.*
+import com.cfwin.cfwinblockchain.activity.user.ADD_IDENTIFY
+import com.cfwin.cfwinblockchain.activity.user.EC_DIR
+import com.cfwin.cfwinblockchain.activity.user.KEY_END_WITH
+import com.cfwin.cfwinblockchain.activity.user.WALLET_DIR
 import com.cfwin.cfwinblockchain.adapter.LoginLogAdapter
 import com.cfwin.cfwinblockchain.beans.LoginLogItem
 import com.cfwin.cfwinblockchain.beans.UserBean
 import com.cfwin.cfwinblockchain.beans.response.ScoreResponse
+import com.cfwin.cfwinblockchain.beans.response.log.LogData
 import com.cfwin.cfwinblockchain.beans.response.log.LogList
 import com.cfwin.cfwinblockchain.db.LocalDBManager
 import com.cfwin.cfwinblockchain.db.tables.LogOperaDao
@@ -32,6 +33,8 @@ import com.cfwin.cfwinblockchain.utils.UrlSignUtil
 import com.chanven.lib.cptr.PtrClassicFrameLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * 主界面 - 登录布局
@@ -144,7 +147,7 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
 
     private fun getList(page :Int, rand :String){
         val pwd = if(pwdTxt == null)null else pwdTxt?.text.toString().trim()
-        val selfSign = UrlSignUtil.signTrans(pwd, dir, "${user?.address}$KEY_END_WITH", (user?.address+rand).toByteArray())
+        val selfSign = UrlSignUtil.signLog(pwd, dir, "${user?.address}$KEY_END_WITH", (user?.address+rand).toByteArray())
         val params = "?pageIndex=$page&pageSize=$pageSize&address=${user?.address}&selfSign=$selfSign"
         VolleyRequestUtil.RequestGet(mContext!!,
                 logHost+Constant.API.LOG_LIST+params,
@@ -153,9 +156,9 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
                     override fun onMySuccess(result: String?) {
                         LogUtil.e(TAG!!, "登录日志获取 result=$result", true)
                         result?.let {
-                            val logList = Gson().fromJson(it, object :TypeToken<ScoreResponse<List<LogList>>>(){}.type) as ScoreResponse<List<LogList>>
-                            if(logList.code == 200 && !logList.data!!.isEmpty()){
-                                compare(logList.data!!, page)
+                            val logList = Gson().fromJson(it, object :TypeToken<ScoreResponse<LogData>>(){}.type) as ScoreResponse<LogData>
+                            if(logList.code == 200 && !logList.data!!.records.isEmpty()){
+                                compare(logList.data!!.records, page)
                             }else{
                                 if(!TextUtils.isEmpty(logList.msg))showToast(msg = logList.msg)
                             }
@@ -169,7 +172,6 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
                     }
                 },
                 false)
-        //Request.Method.GET
     }
 
     private fun compare(data: List<LogList>, page: Int){
@@ -178,7 +180,10 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
         for(server in data){
             val tmp = logDao.queryData(server)
             if(tmp.isEmpty()){
-                addData.add(LoginLogItem(loginAccount = server.address, loginUrl = server.requestedAddress, sign = server.sign, state = true))
+                val sd = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ",Locale.getDefault())
+                var time = sd.parse(server.loginTime)
+                sd.applyPattern("yyyy-MM-dd HH:mm:ss")
+                addData.add(LoginLogItem(loginAccount = server.address, loginUrl = server.loginUrl, sign = server.sign, state = true, time = sd.format(time)))
             }else addData.addAll(tmp)
         }
         if(page == 1){

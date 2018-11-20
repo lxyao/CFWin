@@ -9,7 +9,7 @@ data class LoginLogItem(var loginAccount:String, var loginUrl: String ="", var t
 
     fun equals(log: LogList): Boolean{
         if(log.address == loginAccount
-                && log.requestedAddress == loginUrl
+                && log.loginUrl == loginUrl
                 && log.sign == sign){
             return true
         }

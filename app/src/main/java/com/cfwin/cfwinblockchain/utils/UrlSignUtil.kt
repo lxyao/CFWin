@@ -18,6 +18,12 @@ object UrlSignUtil {
         return replacePlusAndSlash(signContent)
     }
 
+    fun signLog(pwd: String?, dir: String, fileName: String, data: ByteArray): String{
+        val prikeystr = EcKeyUtils.getPrivateKey(pwd, dir, fileName)
+        val signContent = EcKeyUtils.signReturnBase64Url(prikeystr, data)
+        return replacePlusAndSlash(signContent)
+    }
+
     /**
      * 将字符串中的+、/替换成-、_
      * @param str
