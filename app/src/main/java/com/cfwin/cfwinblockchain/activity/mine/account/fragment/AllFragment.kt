@@ -1,9 +1,14 @@
 package com.cfwin.cfwinblockchain.activity.mine.account.fragment
 
+import android.app.Activity
+import android.content.Intent
 import android.text.TextUtils
+import android.view.View
 import com.android.volley.VolleyError
 import com.cfwin.base.utils.LogUtil
 import com.cfwin.cfwinblockchain.Constant
+import com.cfwin.cfwinblockchain.R
+import com.cfwin.cfwinblockchain.activity.mine.account.PresentActivity
 import com.cfwin.cfwinblockchain.adapter.account.DetailAdapter
 import com.cfwin.cfwinblockchain.beans.AccountUseItem
 import com.cfwin.cfwinblockchain.beans.response.ScoreResponse
@@ -34,7 +39,27 @@ class AllFragment :BaseDetailFragment() {
         onPullDownRefresh()
     }
 
-    override fun onPullDownRefresh() {
+    override fun onClick(v: View?) {
+        if(v?.id == R.id.double_sure){
+            val position = v.contentDescription.toString().toInt() - 100
+            if(position >= 0){
+                val bean = adapter!!.getItem(position) as AccountUseItem
+                startActivityForResult(Intent(mContext, PresentActivity::class.java)
+                        .putExtra("item", user)
+                        .putExtra("bean", bean), 202)
+            }
+        }else super.onClick(v)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        LogUtil.e(TAG!!, "转赠后刷新数据 $requestCode $resultCode")
+        if(resultCode == Activity.RESULT_OK && requestCode == 202){
+            onPullDownRefresh()
+        }
+    }
+
+  override fun onPullDownRefresh() {
         page = 1
         getLocal(page)
         getList(page)

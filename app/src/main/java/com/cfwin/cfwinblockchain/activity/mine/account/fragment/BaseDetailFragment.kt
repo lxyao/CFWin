@@ -50,7 +50,7 @@ open class BaseDetailFragment :SubBaseFragment(), BaseRefreshUtil.IRefreshCallba
     @OnItemClick(android.R.id.list)
     open fun onItemClick(position: Int){
         if(mContext is BaseActivity){
-            (mContext as BaseActivity).showDialog("是否确定重新发起转赠？")
+            (mContext as BaseActivity).showDialog("是否确定重新发起转赠？", type = (100+position))
         }
     }
 

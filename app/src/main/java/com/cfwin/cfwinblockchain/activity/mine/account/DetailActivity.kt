@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import butterknife.BindView
 import butterknife.OnClick
+import com.cfwin.base.utils.LogUtil
 import com.cfwin.base.utils.encoded.EcKeyUtils
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
@@ -106,8 +107,17 @@ class DetailActivity :SubBaseActivity(), ViewPager.OnPageChangeListener{
             R.id.double_sure->{
                 if(v.contentDescription.toString().toInt() == 1)
                     showWord()
+                else super.onClick(v)
             }
             else ->super.onClick(v)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        LogUtil.e(TAG!!, "正常转赠 $requestCode $resultCode")
+        baseFragment?.let {
+            it.onActivityResult(requestCode, resultCode, data)
         }
     }
 

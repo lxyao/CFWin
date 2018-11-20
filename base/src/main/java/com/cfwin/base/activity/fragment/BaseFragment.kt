@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.cfwin.base.activity.BaseActivity
 import com.cfwin.base.utils.ToastUtil
 
 /**
@@ -21,6 +22,9 @@ abstract class BaseFragment : Fragment(), View.OnClickListener{
         super.onAttach(context)
         TAG = this.javaClass.simpleName
         mContext = context
+        if(mContext is BaseActivity){
+            (mContext as BaseActivity).baseFragment = this
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

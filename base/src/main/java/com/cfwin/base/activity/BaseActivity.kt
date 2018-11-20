@@ -17,7 +17,7 @@ import com.cfwin.base.utils.ToastUtil
  */
 abstract class BaseActivity : BaseActivityApi23(), View.OnClickListener{
     protected var mContext: Context? = null
-    protected var baseFragment: BaseFragment? = null
+    var baseFragment: BaseFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

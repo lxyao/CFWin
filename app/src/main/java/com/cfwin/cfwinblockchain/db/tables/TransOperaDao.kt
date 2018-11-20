@@ -6,6 +6,9 @@ import com.cfwin.base.db.AbsTableOpera
 import com.cfwin.base.utils.LogUtil
 import com.cfwin.cfwinblockchain.beans.AccountUseItem
 
+/**
+ * 交易表数据操作对象
+ */
 class TransOperaDao constructor(db: SQLiteDatabase) : AbsTableOpera(db) {
 
     init {

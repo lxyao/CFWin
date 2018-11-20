@@ -19,6 +19,7 @@ import com.cfwin.cfwinblockchain.activity.user.ADD_IDENTIFY
 import com.cfwin.cfwinblockchain.activity.user.EC_DIR
 import com.cfwin.cfwinblockchain.activity.user.KEY_END_WITH
 import com.cfwin.cfwinblockchain.activity.user.WALLET_DIR
+import com.cfwin.cfwinblockchain.beans.AccountUseItem
 import com.cfwin.cfwinblockchain.beans.UserBean
 import com.cfwin.cfwinblockchain.http.VolleyListenerInterface
 import com.cfwin.cfwinblockchain.http.VolleyRequestUtil
@@ -42,6 +43,7 @@ class PresentActivity :SubBaseActivity() {
 
     private lateinit var item: UserBean
     private lateinit var host: String
+    private var accountUse: AccountUseItem? = null
     private val transactionCmd = TransactionCmd()
 
     override fun getLayoutId(): Int {
@@ -58,6 +60,12 @@ class PresentActivity :SubBaseActivity() {
         item = intent.getParcelableExtra("item")
         score.text = item.integral
         host = getServer(Constant.API.TYPE_SCORE)
+        accountUse = intent.getParcelableExtra("bean")
+        accountUse?.let {
+            sendScore.setText(it.num)
+            sendScore.setSelection(it.num.length)
+            toAccount.setText(it.toAccount)
+        }
     }
 
     override fun onClick(v: View?) {
