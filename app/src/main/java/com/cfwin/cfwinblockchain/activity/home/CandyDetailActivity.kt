@@ -6,6 +6,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import butterknife.BindView
+import com.cfwin.base.utils.LogUtil
 import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
@@ -35,16 +36,20 @@ class CandyDetailActivity :SubBaseActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         }
-        webView.loadUrl(StringBuilder(intent.getStringExtra("detailUrl"))
-                .append(Constant.API.CANDY_DETAIL).append(intent.getStringExtra("id")).toString(), null)
+        val url = StringBuilder(intent.getStringExtra("detailUrl"))
+                .append(Constant.API.CANDY_DETAIL).append(intent.getStringExtra("id")).toString()
+        LogUtil.e(TAG!!, "webview url = $url")
+        webView.loadUrl(url, null)
         webView.webViewClient = object : WebViewClient(){
             override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
                 super.shouldOverrideUrlLoading(view, url)
+                LogUtil.e(TAG!!, "webview shouldOverrideUrlLoading url = $url")
                 view?.loadUrl(url)
                 return true
             }
 
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                LogUtil.e(TAG!!, "webview shouldOverrideUrlLoading ${Build.VERSION.SDK_INT} url = $url")
                 return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     view?.loadUrl(request?.url.toString())
                     true
