@@ -56,7 +56,7 @@ class ShowAccountActivity :SubBaseActivity() {
             R.id.copy->{
                 //复制到剪切板
                 val cmb = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clipData = ClipData.newPlainText("cfwin_address", (v as TextView).text.toString())
+                val clipData = ClipData.newPlainText("cfwin_address", (v as TextView).text.toString().trim())
                 cmb.primaryClip = clipData
                 showToast("已复制至粘贴板")
             }

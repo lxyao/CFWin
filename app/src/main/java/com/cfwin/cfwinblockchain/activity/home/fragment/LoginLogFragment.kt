@@ -71,7 +71,13 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
         topLine.setBackgroundColor(resources.getColor(R.color.bg_272F4F))
         refreshUtil = BaseRefreshUtil(this, refreshView)
         refreshUtil.initView()
-        initData()
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if(isVisibleToUser && fragmentView != null){
+            initData()
+        }
     }
 
     override fun initData() {
@@ -85,7 +91,7 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
                 onPullDownRefresh()
             }else{
                 dir = "${mContext?.filesDir}$WALLET_DIR"
-                tmp.showDialog("查看日志")
+                tmp.showDialog(title = "查看日志", contentId = R.layout.show_alert_input)
             }
         }
     }

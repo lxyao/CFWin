@@ -34,6 +34,7 @@ class ManagerActivity :SubBaseActivity() {
     lateinit var listview: ListView
     private lateinit var adapter: ManagerAdapter
     private lateinit var host: String
+    private lateinit var userDao: UserOperaDao
 
     override fun getLayoutId(): Int {
         return R.layout.activity_account_manager
@@ -46,12 +47,13 @@ class ManagerActivity :SubBaseActivity() {
     }
 
     override fun initData() {
+        userDao = LocalDBManager(mContext!!).getTableOperation(UserOperaDao::class.java)
         val accountData = getAccount()
         adapter = ManagerAdapter(this, accountData)
         listview.adapter = adapter
         host = getServer(Constant.API.TYPE_SCORE)+Constant.API.ACCOUNT_MONEY
         for(bean in accountData){
-            getAccountMoney(bean.address)
+            getAccountMoney(bean)
         }
     }
 
@@ -60,7 +62,7 @@ class ManagerActivity :SubBaseActivity() {
         if(resultCode == Activity.RESULT_OK && requestCode == 201){
             val account = getAccount()
             adapter.addData(account, true)
-            getAccountMoney(data?.getStringExtra("address")!!)
+            getAccountMoney(data?.getParcelableExtra("user")!!)
         }
     }
 
@@ -79,10 +81,12 @@ class ManagerActivity :SubBaseActivity() {
     }
 
     private fun getAccount(): MutableList<UserBean>{
-        return LocalDBManager(this).getTableOperation(UserOperaDao::class.java).queryUser("")
+        //LocalDBManager(this).getTableOperation(UserOperaDao::class.java)
+        return userDao.queryUser("")
     }
 
-    private fun getAccountMoney(address: String){
+    private fun getAccountMoney(user: UserBean){
+        var address = user.address
         VolleyRequestUtil.RequestPost(this,
                 host,
                 "queryBalance",
@@ -101,9 +105,9 @@ class ManagerActivity :SubBaseActivity() {
                                         money = "${tmpMoney /Math.pow(10.0, 8.0)}"
                                     }
                                     if(TextUtils.isEmpty(serial))serial = "0"
-                                    adapter.updateBalance(UserBean(userName = "",accountName = "", address = address, integral = money!!, serial = serial!!.toInt()))
+                                    adapter.updateBalance(UserBean(userName = user.userName,accountName = user.accountName, address = address, integral = money!!, serial = serial!!.toInt(), type = user.type))
                                     //修改本地数据库信息
-                                    LocalDBManager(mContext).getTableOperation(UserOperaDao::class.java).updateIntegral(money, serial!!.toInt(), address)
+                                    userDao.updateIntegral(money, serial!!.toInt(), address, user.type)
                                 }
                             }catch (e: JsonSyntaxException){
                                 e.printStackTrace()

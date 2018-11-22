@@ -50,6 +50,7 @@
             <EditText
                 android:id="@+id/send_score"
                 style="@style/match.wrap"
+                android:inputType="numberDecimal"
                 android:singleLine="true"
                 android:paddingTop="@dimen/dp_12"
                 android:paddingBottom="@dimen/dp_12"
@@ -124,9 +125,10 @@
             android:textColor="@color/white"
             android:layout_marginLeft="@dimen/dp_12" />
         <EditText
+            android:enabled="false"
             android:id="@+id/gas"
             style="@style/match.wrap"
-            tools:text="123232"
+            android:text="0.0001"
             android:inputType="numberDecimal"
             android:background="@android:color/transparent"
             android:gravity="right"

@@ -23,15 +23,8 @@ class ManagerAdapter constructor(context: Context, data: MutableList<UserBean>)
 
     fun updateBalance(bean: UserBean){
         for(user in data){
-            if(bean.address == user.address){
+            if(bean.address == user.address && bean.type == user.type){
                 user.integral = bean.integral
-//                try {
-//                    "${}"
-//                }catch (e: Exception){
-//                    LogUtil.e("ManagerAdapter", "金额转换异常 e= ${e.localizedMessage}")
-//                    "0"
-//                }
-//                user.integral = DecimalFormat("#.00").format(user.integral)
                 break
             }
         }
