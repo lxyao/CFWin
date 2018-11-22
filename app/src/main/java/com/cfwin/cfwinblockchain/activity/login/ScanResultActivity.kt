@@ -15,6 +15,7 @@ import com.android.volley.VolleyError
 import com.cfwin.base.utils.DateUtil
 import com.cfwin.base.utils.LogUtil
 import com.cfwin.base.utils.ToastUtil
+import com.cfwin.base.utils.UrlUtil
 import com.cfwin.base.utils.encoded.EcKeyUtils
 import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
@@ -32,6 +33,7 @@ import com.cfwin.cfwinblockchain.db.tables.UserOperaDao
 import com.cfwin.cfwinblockchain.http.VolleyListenerInterface
 import com.cfwin.cfwinblockchain.http.VolleyRequestUtil
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.google.zxing.CaptureActivity
 import com.google.zxing.CaptureActivity.INTENT_EXTRA_KEY_QR_SCAN
@@ -107,8 +109,10 @@ class ScanResultActivity :SubBaseActivity() {
                 if(!scanResult(url)){
                     ToastUtil.showCustomToast(context = this, msg = "扫描结果有误")
                 }
-            }else
-                llScanResult.visibility = View.GONE
+            }else{
+//                llScanResult.visibility = View.GONE
+                finish()
+            }
         }
     }
 
@@ -204,9 +208,9 @@ class ScanResultActivity :SubBaseActivity() {
      * 发送登录请求
      */
     private fun sendRequest(pwd: String?= null, dir: String){
-        var urlAddress = urlAddress.text.toString()
-        val startWith = getString(R.string.item_append, getString(R.string.login_url), "")
-        urlAddress = urlAddress.replaceFirst(startWith, "")
+        var urlAddress = urlAddress.contentDescription.toString()
+//        val startWith = getString(R.string.item_append, getString(R.string.login_url), "")
+//        urlAddress = urlAddress.replaceFirst(startWith, "")
         analyzeUrl(urlAddress)
         val confirmBtn = findViewById<TextView>(R.id.confirm)
         try {
@@ -221,20 +225,24 @@ class ScanResultActivity :SubBaseActivity() {
                     map,
                     object: VolleyListenerInterface(this, VolleyListenerInterface.mListener, VolleyListenerInterface.mErrorListener){
                         override fun onMySuccess(result: String?) {
-                            LogUtil.e(TAG!!, "正确访问信息 e=$result")
                             result?.let {
-                                val tmp = Gson().fromJson(it, object :TypeToken<SubVolleyResponse<String>>(){}.type) as SubVolleyResponse<*>
-                                if(tmp.result){
-                                    //记录登录信息
-                                    getSharedPreferences(Constant.configFileName, Context.MODE_PRIVATE)
-                                            .edit()
-                                            .putString(Constant.CURRENT_ACCOUNT, Gson().toJson(currentAccount))
-                                            .apply()
-                                    //存储登录日志信息到本地
-                                    val bean = LoginLogItem(map["Address"]!!, urlAddress, DateUtil.getCurrentDateTime(), sign)
-                                    LocalDBManager(mContext).getTableOperation(LogOperaDao::class.java).insertLog(bean)
-                                    result(Activity.RESULT_OK, it, urlAddress)
-                                }else showToast(tmp.msg)
+                                try{
+                                    val tmp = Gson().fromJson(it, object :TypeToken<SubVolleyResponse<String>>(){}.type) as SubVolleyResponse<*>
+                                    if(tmp.result){
+                                        //记录登录信息
+                                        getSharedPreferences(Constant.configFileName, Context.MODE_PRIVATE)
+                                                .edit()
+                                                .putString(Constant.CURRENT_ACCOUNT, Gson().toJson(currentAccount))
+                                                .apply()
+                                        //存储登录日志信息到本地
+                                        val bean = LoginLogItem(map["Address"]!!, urlAddress, DateUtil.getCurrentDateTime(), sign)
+                                        LocalDBManager(mContext).getTableOperation(LogOperaDao::class.java).insertLog(bean)
+                                        result(Activity.RESULT_OK, it, urlAddress)
+                                    }else showToast(tmp.msg)
+                                }catch (e: JsonSyntaxException){
+                                    e.printStackTrace()
+                                    LogUtil.e(TAG!!, "正确访问信息 e=$result")
+                                }
                             }
                             confirmBtn.isEnabled = true
                         }
@@ -273,7 +281,8 @@ class ScanResultActivity :SubBaseActivity() {
             if(url!!.startsWith("http://") || url!!.startsWith("https://")){
                 //显示扫描结果
                 llScanResult.visibility = View.VISIBLE
-                urlAddress.text = getString(R.string.item_append, getString(R.string.login_url), url)
+                urlAddress.text = getString(R.string.item_append, getString(R.string.login_url), UrlUtil.get3W(url))
+                urlAddress.contentDescription = url
                 return true
             }
         }

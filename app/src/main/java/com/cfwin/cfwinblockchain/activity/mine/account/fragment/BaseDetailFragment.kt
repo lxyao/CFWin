@@ -1,5 +1,7 @@
 package com.cfwin.cfwinblockchain.activity.mine.account.fragment
 
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ListView
 import butterknife.BindView
 import butterknife.OnItemClick
@@ -48,9 +50,12 @@ open class BaseDetailFragment :SubBaseFragment(), BaseRefreshUtil.IRefreshCallba
     }
 
     @OnItemClick(android.R.id.list)
-    open fun onItemClick(position: Int){
-        if(mContext is BaseActivity){
-            (mContext as BaseActivity).showDialog("是否确定重新发起转赠？", type = (100+position))
+    open fun onItemClick(adapter: AdapterView<*>?, v: View, position: Int, param: Long){
+        val item = adapter!!.adapter.getItem(position) as AccountUseItem
+        if(item.state != 1){
+            if(mContext is BaseActivity){
+                (mContext as BaseActivity).showDialog("是否确定重新发起转赠？", type = (100+position))
+            }
         }
     }
 

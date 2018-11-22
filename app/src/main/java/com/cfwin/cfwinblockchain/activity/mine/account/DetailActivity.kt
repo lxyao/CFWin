@@ -45,7 +45,9 @@ class DetailActivity :SubBaseActivity(), ViewPager.OnPageChangeListener{
         setTopNavBackground()
         topMenu.text = getString(R.string.helper_word)
         item = intent.getParcelableExtra("item")
-        topTitle.text = item.accountName
+        if(item.type == ADD_IDENTIFY)topTitle.text = item.userName
+        else
+            topTitle.text = item.accountName
         topTitle.setSingleLine()
         viewPager.addOnPageChangeListener(this)
         maxWidth = resources.displayMetrics.widthPixels shr 2

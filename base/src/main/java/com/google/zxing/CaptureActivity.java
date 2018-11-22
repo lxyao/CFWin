@@ -35,6 +35,8 @@ import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.utils.UriUtil;
 import com.google.zxing.view.ViewfinderView;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -406,4 +408,13 @@ public class CaptureActivity extends BaseActivity implements Callback {
 
     @Override
     protected void initData() { }
+
+    @Override
+    public void onClick(@Nullable View v) {
+        if(v.getId() == R.id.iv_back){
+            finish();
+        }else
+            super.onClick(v);
+
+    }
 }

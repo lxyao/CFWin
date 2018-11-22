@@ -6,6 +6,7 @@ import android.widget.CheckBox
 import android.widget.TextView
 import butterknife.BindView
 import com.cfwin.base.adapter.ImplBaseAdapter
+import com.cfwin.base.utils.UrlUtil
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.beans.LoginLogItem
 
@@ -30,7 +31,7 @@ class LoginLogAdapter constructor(context: Context, data: MutableList<LoginLogIt
         val tmpHolder = holder as ViewHolder
         val bean = data[position]
         tmpHolder.icon.isChecked = bean.state
-        tmpHolder.title.text = context.getString(R.string.item_append, context.getString(R.string.login_url), bean.loginUrl)
+        tmpHolder.title.text = context.getString(R.string.item_append, context.getString(R.string.login_url), UrlUtil.get3W(bean.loginUrl))
         tmpHolder.subTitle.text =context.getString(R.string.item_append, context.getString(R.string.login_time), bean.time)
     }
 

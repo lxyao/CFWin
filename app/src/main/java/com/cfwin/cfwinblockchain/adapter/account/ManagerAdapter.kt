@@ -50,14 +50,15 @@ class ManagerAdapter constructor(context: Context, data: MutableList<UserBean>)
     override fun <B : BaseViewHolder> showView(position: Int, holder: B) {
         val tmpHolder = holder as ViewHolder
         val item = data[position]
-        tmpHolder.title.text = item.accountName
         tmpHolder.score.text = item.integral
         val str = item.address
         tmpHolder.subTitle.text = "${str.substring(0..7)}...${str.substring(str.length - 8)}"
         if(item.type == 1){
+            tmpHolder.title.text = item.accountName
             tmpHolder.icon.setImageResource(R.mipmap.ic_account_state_orange)
             tmpHolder.view.setBackgroundResource(R.mipmap.ic_account_orange_bg)
         }else{
+            tmpHolder.title.text = item.userName
             tmpHolder.icon.setImageResource(R.mipmap.ic_account_state_gray)
             tmpHolder.view.setBackgroundResource(R.mipmap.ic_account_gray_bg)
         }

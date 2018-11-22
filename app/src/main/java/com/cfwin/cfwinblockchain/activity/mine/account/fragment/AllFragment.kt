@@ -9,6 +9,7 @@ import com.cfwin.base.utils.LogUtil
 import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.mine.account.PresentActivity
+import com.cfwin.cfwinblockchain.activity.user.ADD_IDENTIFY
 import com.cfwin.cfwinblockchain.adapter.account.DetailAdapter
 import com.cfwin.cfwinblockchain.beans.AccountUseItem
 import com.cfwin.cfwinblockchain.beans.response.ScoreResponse
@@ -135,7 +136,8 @@ class AllFragment :BaseDetailFragment() {
         val tmp = transOperaDao.queryData(page, user!!.address)
         if(page == 1){
             if(adapter == null){
-                adapter = DetailAdapter(mContext!!, tmp, user!!.accountName)
+                val title = if(user!!.type == ADD_IDENTIFY)user!!.userName else user!!.accountName
+                adapter = DetailAdapter(mContext!!, tmp, title)
                 listView.adapter = adapter
             }else adapter!!.addData(tmp, true)
         }else adapter!!.addData(tmp, false)

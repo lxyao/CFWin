@@ -22,6 +22,7 @@ import com.cfwin.cfwinblockchain.db.tables.UserOperaDao
 import com.cfwin.cfwinblockchain.http.VolleyListenerInterface
 import com.cfwin.cfwinblockchain.http.VolleyRequestUtil
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 
 /**
@@ -88,21 +89,25 @@ class ManagerActivity :SubBaseActivity() {
                 mapOf("address" to address),
                 object :VolleyListenerInterface(this, VolleyListenerInterface.mListener, VolleyListenerInterface.mErrorListener){
                     override fun onMySuccess(result: String?) {
-                        LogUtil.e(TAG!!, "账户信息 $result", true)
                         result?.let {
-                            val balance = Gson().fromJson(it, object :TypeToken<ScoreResponse<Map<String, String>>>(){}.type) as ScoreResponse<Map<String, String>>
-                            if(balance.result == balance.STATE_SUCCESS){
-                                var money = balance.data!!["balance"]
-                                var serial = balance.data!!["serial"]
-                                if(TextUtils.isEmpty(money))money = "0"
-                                val tmpMoney = money?.toLong()!!
-                                if(tmpMoney > 0){
-                                    money = "${tmpMoney /Math.pow(10.0, 8.0)}"
+                            try{
+                                val balance = Gson().fromJson(it, object :TypeToken<ScoreResponse<Map<String, String>>>(){}.type) as ScoreResponse<Map<String, String>>
+                                if(balance.result == balance.STATE_SUCCESS){
+                                    var money = balance.data!!["balance"]
+                                    var serial = balance.data!!["serial"]
+                                    if(TextUtils.isEmpty(money))money = "0"
+                                    val tmpMoney = money?.toLong()!!
+                                    if(tmpMoney > 0){
+                                        money = "${tmpMoney /Math.pow(10.0, 8.0)}"
+                                    }
+                                    if(TextUtils.isEmpty(serial))serial = "0"
+                                    adapter.updateBalance(UserBean(userName = "",accountName = "", address = address, integral = money!!, serial = serial!!.toInt()))
+                                    //修改本地数据库信息
+                                    LocalDBManager(mContext).getTableOperation(UserOperaDao::class.java).updateIntegral(money, serial!!.toInt(), address)
                                 }
-                                if(TextUtils.isEmpty(serial))serial = "0"
-                                adapter.updateBalance(UserBean(userName = "",accountName = "", address = address, integral = money!!, serial = serial!!.toInt()))
-                                //修改本地数据库信息
-                                LocalDBManager(mContext).getTableOperation(UserOperaDao::class.java).updateIntegral(money, serial!!.toInt(), address)
+                            }catch (e: JsonSyntaxException){
+                                e.printStackTrace()
+                                LogUtil.e(TAG!!, "账户信息 $result", true)
                             }
                         }
                     }
