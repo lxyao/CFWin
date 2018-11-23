@@ -168,18 +168,6 @@ class PresentActivity :SubBaseActivity() {
         transaction(hashMap)
     }
 
-//    /**
-//     * 将字符串中的+、/替换成-、_
-//     * @param str
-//     * @return
-//     */
-//    private fun replacePlusAndSlash(str: String): String {
-//        var str = str
-//        str = str.replace('+', '-')
-//        str = str.replace('/', '_')
-//        return str
-//    }
-
     /**
      * 生成hash
      * @param str
@@ -233,7 +221,7 @@ class PresentActivity :SubBaseActivity() {
                                 if(tmp.code == 200 && !tmp.data!!.isEmpty()){
                                     showToast("转赠成功")
                                     finish()
-                                }
+                                }else showToast(tmp.result)
                             }catch (e: Exception){
                                 e.printStackTrace()
                                 LogUtil.e(TAG!!, "积分转赠 result= $result", true)

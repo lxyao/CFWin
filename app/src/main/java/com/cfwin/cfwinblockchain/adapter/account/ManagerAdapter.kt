@@ -25,6 +25,7 @@ class ManagerAdapter constructor(context: Context, data: MutableList<UserBean>)
         for(user in data){
             if(bean.address == user.address && bean.type == user.type){
                 user.integral = bean.integral
+                user.serial = bean.serial
                 break
             }
         }
