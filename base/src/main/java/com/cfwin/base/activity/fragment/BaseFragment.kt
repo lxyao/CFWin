@@ -31,9 +31,13 @@ abstract class BaseFragment : Fragment(), View.OnClickListener{
         super.onCreateView(inflater, container, savedInstanceState)
         if(getLayoutId() > 0){
             fragmentView = inflater.inflate(getLayoutId(), container, false)
-            initView()
         }
         return fragmentView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initView()
     }
 
     /**

@@ -109,7 +109,7 @@ class ImportUserActivity : SubBaseActivity() {
                         }
                         else if(wordType == ADD_ACCOUNT){
                             it.setResult(Activity.RESULT_OK, Intent()
-                                    .putExtra("address", address))
+                                    .putExtra("user", bean))
                         }
                         it.finish()
                     }

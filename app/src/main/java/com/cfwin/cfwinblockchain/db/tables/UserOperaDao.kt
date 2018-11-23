@@ -27,16 +27,12 @@ class UserOperaDao constructor(db: SQLiteDatabase) : AbsTableOpera(db) {
         LogUtil.e(TAG, "插入成功 id=$id")
     }
 
-    fun updateIntegral(num: String, serial: Int, address: String){
+    fun updateIntegral(num: String, serial: Int, address: String, type: Int){
         val values = ContentValues()
         values.put("integral", num)
         values.put("serial", serial)
-        val index = update(values, "address = '$address'", null)
+        val index = update(values, "address = '$address' and type = $type", null)
         LogUtil.e(TAG, "修改积分 index = $index")
-//        val result= query(arrayOf("integral"), "address = '$address'", null)
-//        if(result != null && result.isNotEmpty()){
-//            val tmp = if(TextUtils.isEmpty(result[0][0]) || result[0][0] == "0.0")"0" else result[0][0]
-//        }
     }
 
     fun queryUser(accountName: String= ""): MutableList<UserBean>{

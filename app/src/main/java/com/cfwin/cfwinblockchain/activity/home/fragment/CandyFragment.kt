@@ -56,6 +56,7 @@ class CandyFragment : SubBaseFragment(), IRefreshCallback<CandyFragment> {
     }
 
     override fun initView() {
+        LogUtil.e(TAG!!, "记录一下布局是否没有加载成功 fragmentView= $fragmentView")
         super.initView()
         toolBar.navigationIcon = null
         topTitle.text = getString(R.string.candy)
@@ -107,16 +108,16 @@ class CandyFragment : SubBaseFragment(), IRefreshCallback<CandyFragment> {
                     override fun onMySuccess(result: String?) {
                         LogUtil.e(TAG!!, "糖果列表信息 result= $result", true)
                         result?.let {
-                            val candyList = Gson().fromJson(result, object :TypeToken<CandyList>(){}.type) as CandyList
-                            candyDetailUrl = candyList.Request
-                            refreshUtil.resetRefresh(page)
-                            if(page == 1){
-                                adapter = CandyListAdapter(mContext, candyList.Data?.Items as MutableList<CandyItem>)
-                                listView.adapter = adapter
-                            }else{
-                                adapter.addData(candyList.Data?.Items as MutableList<CandyItem>, false)
-                            }
                             try{
+                                val candyList = Gson().fromJson(result, object :TypeToken<CandyList>(){}.type) as CandyList
+                                candyDetailUrl = candyList.Request
+                                refreshUtil.resetRefresh(page)
+                                if(page == 1){
+                                    adapter = CandyListAdapter(mContext, candyList.Data?.Items as MutableList<CandyItem>)
+                                    listView.adapter = adapter
+                                }else{
+                                    adapter.addData(candyList.Data?.Items as MutableList<CandyItem>, false)
+                                }
                                 refreshView.isLoadMoreEnable = page < candyList.Data!!.PageCount
                             }catch (e: Exception){
                                 e.printStackTrace()

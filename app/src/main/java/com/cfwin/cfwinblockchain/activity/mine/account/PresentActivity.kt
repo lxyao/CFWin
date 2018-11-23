@@ -21,10 +21,13 @@ import com.cfwin.cfwinblockchain.activity.user.KEY_END_WITH
 import com.cfwin.cfwinblockchain.activity.user.WALLET_DIR
 import com.cfwin.cfwinblockchain.beans.AccountUseItem
 import com.cfwin.cfwinblockchain.beans.UserBean
+import com.cfwin.cfwinblockchain.beans.response.ScoreResponse
 import com.cfwin.cfwinblockchain.http.VolleyListenerInterface
 import com.cfwin.cfwinblockchain.http.VolleyRequestUtil
 import com.cfwin.cfwinblockchain.utils.UrlSignUtil
 import com.cfwin.cfwinblockchain.utils.UrlSignUtil.replacePlusAndSlash
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.google.zxing.CaptureActivity
 import com.google.zxing.CaptureActivity.INTENT_EXTRA_KEY_QR_SCAN
 import org.web3j.crypto.Hash.sha256
@@ -86,7 +89,11 @@ class PresentActivity :SubBaseActivity() {
                     showToast(getString(R.string.input_pwd_hint))
                     return
                 }
-                sign(pwd, "$filesDir$WALLET_DIR")
+                try{
+                    sign(pwd, "$filesDir$WALLET_DIR")
+                }catch (e: Exception){
+                    e.printStackTrace()
+                }
             }
             else ->super.onClick(v)
         }
@@ -117,11 +124,15 @@ class PresentActivity :SubBaseActivity() {
             return
         }
         val gas = gas.text.toString().trim()
-        transactionCmd.Content.Init(item.address, account, num.toString(), "${item.serial}", DateUtil.getCurrentDateTime())
-        transactionCmd.Commission.Init("", item.address, gas, DateUtil.getCurrentDateTime())
+        transactionCmd.Content.Init(item.address, account, "${(num * Math.pow(10.0, 8.0)).toLong()}", "${item.serial + 1}", DateUtil.getCurrentDateTime())
+        transactionCmd.Commission.Init("", item.address, "${(gas.toDouble() * Math.pow(10.0, 8.0)).toLong()}", DateUtil.getCurrentDateTime())
         if(item.type == ADD_IDENTIFY){
-            sign(null, "$filesDir$EC_DIR")
-        }else showDialog("转赠积分")
+            try{
+                sign(null, "$filesDir$EC_DIR")
+            }catch (e: Exception){
+                e.printStackTrace()
+            }
+        }else showDialog(title = "转赠积分", contentId = R.layout.show_alert_input)
     }
 
     override fun onAlertView(v: View) {
@@ -134,12 +145,6 @@ class PresentActivity :SubBaseActivity() {
                 .append(transactionCmd.Content.serial)
                 .append(transactionCmd.Content.balance)
                 .append(transactionCmd.Content.timestamp)
-//        val prikeystr = EcKeyUtils.getPrivateKey(pwd, dir, "${item.address}$KEY_END_WITH")
-//        var signContent = EcKeyUtils.signReturnBase64(prikeystr, sb.toString().toByteArray())
-//        ///////////////////////////////////////////////////////////////////////////////////////////
-//        signContent = replacePlusAndSlash(signContent)
-//        transactionCmd.SignContent.sign = signContent
-//        val ss = sb.append(signContent).toString()
         transactionCmd.SignContent.sign = UrlSignUtil.signTrans(pwd, dir, "${item.address}$KEY_END_WITH", sb.toString().toByteArray())
         val ss = sb.append(transactionCmd.SignContent.sign).toString()
         val hexStr = getHash(ss)
@@ -148,9 +153,6 @@ class PresentActivity :SubBaseActivity() {
                 .append(transactionCmd.Commission.payer)
                 .append(transactionCmd.Commission.gas)
                 .append(transactionCmd.Commission.commissionTimestamp)
-        ///////////////////////////////////////////////////////////////////////////////////////////
-//        var signCommission = EcKeyUtils.signReturnBase64(prikeystr, commission.toString().toByteArray())
-//        signCommission = replacePlusAndSlash(signCommission)
         transactionCmd.SignCommision.sign = UrlSignUtil.signTrans(pwd, dir, "${item.address}$KEY_END_WITH", commission.toString().toByteArray())
         val hashMap = HashMap<String, Any>()
         val contentMap = object2Map(transactionCmd.Content)
@@ -225,7 +227,18 @@ class PresentActivity :SubBaseActivity() {
                 params,
                 object : VolleyListenerInterface(this, VolleyListenerInterface.mListener, VolleyListenerInterface.mErrorListener){
                     override fun onMySuccess(result: String?) {
-                        LogUtil.e(TAG!!, "积分转赠 result= $result", true)
+                        result?.let {
+                            try{
+                                val tmp = Gson().fromJson<ScoreResponse<Map<String, String>>>(it, object :TypeToken<ScoreResponse<Map<String, String>>>(){}.type)
+                                if(tmp.code == 200 && !tmp.data!!.isEmpty()){
+                                    showToast("转赠成功")
+                                    finish()
+                                }
+                            }catch (e: Exception){
+                                e.printStackTrace()
+                                LogUtil.e(TAG!!, "积分转赠 result= $result", true)
+                            }
+                        }
                     }
 
                     override fun onMyError(error: VolleyError?) {
