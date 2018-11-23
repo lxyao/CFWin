@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.text.TextUtils
-import android.util.Base64
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -37,7 +36,6 @@ import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.google.zxing.CaptureActivity
 import com.google.zxing.CaptureActivity.INTENT_EXTRA_KEY_QR_SCAN
-import java.net.URLEncoder
 import java.util.*
 
 /**
@@ -209,8 +207,6 @@ class ScanResultActivity :SubBaseActivity() {
      */
     private fun sendRequest(pwd: String?= null, dir: String){
         var urlAddress = urlAddress.contentDescription.toString()
-//        val startWith = getString(R.string.item_append, getString(R.string.login_url), "")
-//        urlAddress = urlAddress.replaceFirst(startWith, "")
         analyzeUrl(urlAddress)
         val confirmBtn = findViewById<TextView>(R.id.confirm)
         try {
@@ -248,8 +244,10 @@ class ScanResultActivity :SubBaseActivity() {
                         }
 
                         override fun onMyError(error: VolleyError?) {
-                            LogUtil.e(TAG!!, "错误信息 e=${error.toString()}")
-                            result(Activity.RESULT_CANCELED, error.toString(), urlAddress)
+                            var msg= error?.localizedMessage
+                            if(TextUtils.isEmpty(msg)) msg = "服务器状态 code =${error?.networkResponse?.statusCode}"
+                            LogUtil.e(TAG!!, "错误信息 e=$msg")
+                            result(Activity.RESULT_CANCELED, msg, urlAddress)
                             confirmBtn.isEnabled = true
                         }
                     },
@@ -293,10 +291,10 @@ class ScanResultActivity :SubBaseActivity() {
     /**
      * 三方调用结果返回格式处理
      */
-    private fun invokeResult(msg: String, loginInfo: String) = Intent()
+    private fun invokeResult(msg: String?, loginInfo: String) = Intent()
             .putExtra(RESULT_INFO, """{"msg":$msg,"loginInfo":$loginInfo}""")
 
-    private fun result(state:Int, str: String, urlAddress: String){
+    private fun result(state:Int, str: String?, urlAddress: String){
         if(isLoginInfo){
             setResult(state, invokeResult(str, urlAddress))
         }else{
