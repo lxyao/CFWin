@@ -92,6 +92,10 @@ class ScanResultActivity :SubBaseActivity() {
                 finish()
                 return
             }
+            //授权信息显示
+            topTitle.text = "授权登录"
+            urlTitle.text = UrlUtil.getUrlParams(loginInfo, "appname") as String
+            findViewById<TextView>(R.id.hint_msg).text = "请确认是否授权${urlTitle.text}登录"
         }else{
             startActivityForResult(Intent(this, CaptureActivity::class.java)
                     .putExtra("title", "扫码登录"), 101)
@@ -108,7 +112,6 @@ class ScanResultActivity :SubBaseActivity() {
                     ToastUtil.showCustomToast(context = this, msg = "扫描结果有误")
                 }
             }else{
-//                llScanResult.visibility = View.GONE
                 finish()
             }
         }
@@ -237,6 +240,8 @@ class ScanResultActivity :SubBaseActivity() {
                                     }else showToast(tmp.msg)
                                 }catch (e: JsonSyntaxException){
                                     e.printStackTrace()
+                                    showToast(msg = getString(R.string.json_format_error))
+                                    result(Activity.RESULT_CANCELED, result, urlAddress)
                                     LogUtil.e(TAG!!, "正确访问信息 e=$result")
                                 }
                             }

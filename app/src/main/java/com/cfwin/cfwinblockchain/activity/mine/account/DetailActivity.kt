@@ -136,7 +136,7 @@ class DetailActivity :SubBaseActivity(), ViewPager.OnPageChangeListener{
             EcKeyUtils.getMnemonic(pwd,"$filesDir$WALLET_DIR" , "${item.address}$WORD_END_WITH")
         }
         if(TextUtils.isEmpty(word)){
-            showToast("密码输入错误！")
+            showToast(msg = getString(R.string.pwd_input_error))
             return
         }
         val words = if(item.type == ADD_IDENTIFY)arrayOf(word, "") else arrayOf("", word)

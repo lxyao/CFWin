@@ -25,6 +25,7 @@ import com.cfwin.cfwinblockchain.http.VolleyListenerInterface
 import com.cfwin.cfwinblockchain.http.VolleyRequestUtil
 import com.chanven.lib.cptr.PtrClassicFrameLayout
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 
 /**
@@ -119,6 +120,9 @@ class CandyFragment : SubBaseFragment(), IRefreshCallback<CandyFragment> {
                                     adapter.addData(candyList.Data?.Items as MutableList<CandyItem>, false)
                                 }
                                 refreshView.isLoadMoreEnable = page < candyList.Data!!.PageCount
+                            }catch (e: JsonSyntaxException){
+                                e.printStackTrace()
+                                showToast(msg = getString(R.string.json_format_error))
                             }catch (e: Exception){
                                 e.printStackTrace()
                             }

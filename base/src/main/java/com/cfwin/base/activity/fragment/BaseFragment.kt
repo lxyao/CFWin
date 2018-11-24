@@ -22,7 +22,14 @@ abstract class BaseFragment : Fragment(), View.OnClickListener{
         super.onAttach(context)
         TAG = this.javaClass.simpleName
         mContext = context
-        if(mContext is BaseActivity){
+        if(mContext is BaseActivity && userVisibleHint){
+            (mContext as BaseActivity).baseFragment = this
+        }
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if(mContext is BaseActivity && isVisibleToUser){
             (mContext as BaseActivity).baseFragment = this
         }
     }

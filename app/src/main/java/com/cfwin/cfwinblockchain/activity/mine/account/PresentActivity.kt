@@ -93,6 +93,7 @@ class PresentActivity :SubBaseActivity() {
                     sign(pwd, "$filesDir$WALLET_DIR")
                 }catch (e: Exception){
                     e.printStackTrace()
+                    LogUtil.e(TAG!!, "转赠失败 e= ${e.localizedMessage}")
                 }
             }
             else ->super.onClick(v)
@@ -131,6 +132,7 @@ class PresentActivity :SubBaseActivity() {
                 sign(null, "$filesDir$EC_DIR")
             }catch (e: Exception){
                 e.printStackTrace()
+                LogUtil.e(TAG!!, "转赠失败 e= ${e.localizedMessage}")
             }
         }else showDialog(title = "转赠积分", contentId = R.layout.show_alert_input)
     }

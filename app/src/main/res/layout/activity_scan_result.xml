@@ -50,6 +50,7 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/hint_msg"
         style="@style/match.wrap"
         android:text="@string/scan_result_hint"
         android:textSize="@dimen/sp_16"

@@ -32,6 +32,7 @@ import com.cfwin.cfwinblockchain.http.VolleyRequestUtil
 import com.cfwin.cfwinblockchain.utils.UrlSignUtil
 import com.chanven.lib.cptr.PtrClassicFrameLayout
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import java.text.SimpleDateFormat
 import java.util.*
@@ -58,6 +59,7 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
     private var user: UserBean? = null
     private var pwdTxt: EditText? = null
     private lateinit var dir: String
+    private var isLoaded = false
 
     override fun getLayoutId(): Int {
         return R.layout.fragment_loginlog
@@ -71,11 +73,13 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
         topLine.setBackgroundColor(resources.getColor(R.color.bg_272F4F))
         refreshUtil = BaseRefreshUtil(this, refreshView)
         refreshUtil.initView()
+        if(!isLoaded)initData()
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if(isVisibleToUser && fragmentView != null){
+            isLoaded = true
             initData()
         }
     }
@@ -86,12 +90,14 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
             user = tmp.getUser()
             logHost = tmp.getServer(Constant.API.TYPE_LOG)
             if(TextUtils.isEmpty(user?.address))user?.address = ""
-            if(user?.type == ADD_IDENTIFY){
-                dir = "${mContext?.filesDir}$EC_DIR"
-                onPullDownRefresh()
-            }else{
-                dir = "${mContext?.filesDir}$WALLET_DIR"
-                tmp.showDialog(title = "查看日志", contentId = R.layout.show_alert_input)
+            if(userVisibleHint){
+                if(user?.type == ADD_IDENTIFY){
+                    dir = "${mContext?.filesDir}$EC_DIR"
+                    onPullDownRefresh()
+                }else{
+                    dir = "${mContext?.filesDir}$WALLET_DIR"
+                    tmp.showDialog(title = "查看日志", contentId = R.layout.show_alert_input)
+                }
             }
         }
     }
@@ -133,12 +139,20 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
                  "{\"address\":\"${user?.address}\"}",
                 object :VolleyListenerInterface(mContext, VolleyListenerInterface.mListener, VolleyListenerInterface.mErrorListener){
                     override fun onMySuccess(result: String?) {
-                        LogUtil.e(TAG!!, "日志随机数获取 = $result", true)
                         result?.let {
-                            val tmp = Gson().fromJson(it, object :TypeToken<ScoreResponse<Map<String, String>>>(){}.type) as ScoreResponse<Map<String, String>>
-                            if(tmp.code == 200 && (tmp.data?.isEmpty() == false)){
-                                val rand = tmp.data!!["rand"]
-                                getList(page, rand!!)
+                            try{
+                                val tmp = Gson().fromJson(it, object :TypeToken<ScoreResponse<Map<String, String>>>(){}.type) as ScoreResponse<Map<String, String>>
+                                if(tmp.code == 200 && (tmp.data?.isEmpty() == false)){
+                                    val rand = tmp.data!!["rand"]
+                                    getList(page, rand!!)
+                                }else{
+                                    LogUtil.e(TAG!!, "日志随机数获取 = $result")
+                                    refreshUtil.resetRefresh(page)
+                                }
+                            }catch (e: JsonSyntaxException){
+                                e.printStackTrace()
+                                showToast(msg = getString(R.string.json_format_error))
+                                LogUtil.e(TAG!!, "日志随机数获取 = $result")
                             }
                         }
                     }
@@ -153,7 +167,18 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
 
     private fun getList(page :Int, rand :String){
         val pwd = if(pwdTxt == null)null else pwdTxt?.text.toString().trim()
-        val selfSign = UrlSignUtil.signLog(pwd, dir, "${user?.address}$KEY_END_WITH", (user?.address+rand).toByteArray())
+        val selfSign = try{
+            UrlSignUtil.signLog(pwd, dir, "${user?.address}$KEY_END_WITH", (user?.address+rand).toByteArray())
+        }catch (e: Exception){
+            e.printStackTrace()
+            ""
+        }
+        if(TextUtils.isEmpty(selfSign) && !TextUtils.isEmpty(pwd)){
+            showToast(msg = getString(R.string.pwd_input_error))
+            refreshUtil.resetRefresh(page)
+            this.page--
+            return
+        }
         val params = "?pageIndex=$page&pageSize=$pageSize&address=${user?.address}&selfSign=$selfSign"
         VolleyRequestUtil.RequestGet(mContext!!,
                 logHost+Constant.API.LOG_LIST+params,
@@ -162,11 +187,16 @@ class LoginLogFragment : SubBaseFragment(), BaseRefreshUtil.IRefreshCallback<Log
                     override fun onMySuccess(result: String?) {
                         LogUtil.e(TAG!!, "登录日志获取 result=$result", true)
                         result?.let {
-                            val logList = Gson().fromJson(it, object :TypeToken<ScoreResponse<LogData>>(){}.type) as ScoreResponse<LogData>
-                            if(logList.code == 200 && !logList.data!!.records.isEmpty()){
-                                compare(logList.data!!.records, page)
-                            }else{
-                                if(!TextUtils.isEmpty(logList.msg))showToast(msg = logList.msg)
+                            try{
+                                val logList = Gson().fromJson(it, object :TypeToken<ScoreResponse<LogData>>(){}.type) as ScoreResponse<LogData>
+                                if(logList.code == 200 && !logList.data!!.records.isEmpty()){
+                                    compare(logList.data!!.records, page)
+                                }else{
+                                    if(!TextUtils.isEmpty(logList.msg))showToast(msg = logList.msg)
+                                }
+                            }catch (e: JsonSyntaxException){
+                                e.printStackTrace()
+                                showToast(msg = getString(R.string.json_format_error))
                             }
                         }
                         refreshUtil.resetRefresh(page)

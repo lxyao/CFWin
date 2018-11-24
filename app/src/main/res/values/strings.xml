@@ -53,4 +53,6 @@
     <string name="login_account_hint">建议：扫码登录使用身份名称账户登录</string>
     <string name="send_score">请输入转赠积分</string>
     <string name="input_pwd_hint">请输入设置的密码</string>
+    <string name="json_format_error">json 格式异常</string>
+    <string name="pwd_input_error">密码输入错误！</string>
 </resources>
