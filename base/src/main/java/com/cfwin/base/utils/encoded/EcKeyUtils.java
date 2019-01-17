@@ -5,7 +5,15 @@ import android.util.Log;
 
 import com.subgraph.orchid.encoders.Hex;
 
-import org.web3j.crypto.MnemonicUtils;
+import org.bitcoinj.core.Base58;
+import org.bitcoinj.core.NetworkParameters;
+import org.bitcoinj.crypto.ChildNumber;
+import org.bitcoinj.crypto.DeterministicHierarchy;
+import org.bitcoinj.crypto.DeterministicKey;
+import org.bitcoinj.crypto.HDKeyDerivation;
+import org.bitcoinj.crypto.MnemonicCode;
+import org.bitcoinj.params.MainNetParams;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -24,6 +32,9 @@ import java.security.spec.ECGenParameterSpec;
 import java.security.spec.ECPoint;
 import java.security.spec.ECPrivateKeySpec;
 import java.security.spec.ECPublicKeySpec;
+import java.util.Arrays;
+
+import javax.crypto.Cipher;
 
 import Decoder.BASE64Decoder;
 import Decoder.BASE64Encoder;
@@ -31,21 +42,35 @@ import io.github.novacrypto.bip39.MnemonicGenerator;
 import io.github.novacrypto.bip39.Words;
 import io.github.novacrypto.bip39.wordlists.English;
 
-import static org.web3j.crypto.Hash.sha256;
+import static io.github.novacrypto.hashing.Sha256.sha256;
+
+//import org.bouncycastle.jce.spec.IESParameterSpec;
+//import org.bouncycastle.jce.interfaces.ECPrivateKey;
+//import org.bouncycastle.jce.interfaces.ECPublicKey;
+//import org.bouncycastle.jce.provider.BouncyCastleProvider;
+//import org.bouncycastle.math.ec.ECCurve;
+//import org.bouncycastle.math.ec.ECPoint;
 
 /**
  * Created by Administrator on 2018/9/28.
  */
+
 public class EcKeyUtils {
     public static final String ALGORITHM = "EC";
-    public static final String SPACE_NAME= "secp256r1";// eq prime256v1
+    public static final String SPACE_NAME= "prime256v1";// eq prime256v1
 
     /**
      * 生成助记词
      */
     public static String createMnemonic(){
+
+
+//        MnemonicCode mc = new MnemonicCode();
+//        byte[] entropy = {};
+//        mc.toMnemonic(entropy);
+
         StringBuilder sb = new StringBuilder();
-        byte[] entropy = new byte[Words.TWELVE.byteLength()];
+        byte[] entropy = new byte[Words.FIFTEEN.byteLength()];
         new SecureRandom().nextBytes(entropy);
         new MnemonicGenerator(English.INSTANCE).createMnemonic(entropy, sb::append);
 
@@ -91,11 +116,11 @@ public class EcKeyUtils {
             return false;
         }
 
-        byte[] passwordbyte = sha256(password.getBytes());
-        byte[] rawKey = AESUtil.getRawKey(passwordbyte);
+        //byte[] passwordbyte = sha256(password.getBytes());
+        //byte[] rawKey = AESUtil.getRawKey(passwordbyte);
 
         // AES crypto
-        byte[] encryptedByteArr = AESUtil.encrypt(passwordbyte,mnemonic.trim() );
+        byte[] encryptedByteArr = AESUtil.encrypt(password,mnemonic.trim().getBytes());
         String encryptedPwd = new String(encryptedByteArr);
         Log.e("encryptedPwd",encryptedPwd);
         // save
@@ -138,11 +163,8 @@ public class EcKeyUtils {
             in1.close();
         }
 
-        // password 转 sha256
-        byte[] passwordbyte = sha256(password.getBytes());
-
         // AES 解密
-        byte[] decryptedByteArr = AESUtil.decrypt(b, passwordbyte);
+        byte[] decryptedByteArr = AESUtil.decrypt(password, b);
         if (decryptedByteArr == null){
             return null;
         }
@@ -156,7 +178,8 @@ public class EcKeyUtils {
      */
     public static String mnemonic2PrivateKey(String mnemonic)
     {
-        byte[] seed = MnemonicUtils.generateSeed(mnemonic, null);
+        byte[] seed = MnemonicCode.toSeed(Arrays.asList(mnemonic.split(" ")), "");
+        //byte[] seed = MnemonicUtils.generateSeed(mnemonic, null);
         byte[] privkeytemp = sha256(seed);
 
         //BASE64Encoder enc = new BASE64Encoder();
@@ -166,6 +189,64 @@ public class EcKeyUtils {
         return hexStr;
         // 返回16进制 hex 字符串
     }
+
+    public static String GenMasterPrivateKey(String mnemonic)
+    {
+        byte[] seed = MnemonicCode.toSeed(Arrays.asList(mnemonic.split(" ")), "");
+        //byte[] seed = MnemonicUtils.generateSeed(mnemonic, null);
+        DeterministicKey masterPrivateKey = HDKeyDerivation.createMasterPrivateKey(seed);
+        NetworkParameters MAINNET = MainNetParams.get();
+        byte[] privkeybytes = masterPrivateKey.serializePrivate(MAINNET);
+        if (privkeybytes.length == 78)
+        {
+            String hexStr = bytesToHex(privkeybytes);
+            String hextemp = hexStr.substring(hexStr.length() - 64);
+            return hextemp;
+        }
+        else
+        {
+            return null;
+        }
+
+        // 返回16进制 hex 字符串
+    }
+
+    public static String GenSubPrivateKey(String mnemonic, ChildNumber[] path)
+    {
+        byte[] seed = MnemonicCode.toSeed(Arrays.asList(mnemonic.split(" ")), "");
+        //byte[] seed = MnemonicUtils.generateSeed(mnemonic, null);
+        DeterministicKey masterPrivateKey = HDKeyDerivation.createMasterPrivateKey(seed);
+        NetworkParameters MAINNET = MainNetParams.get();
+
+        DeterministicHierarchy dh = new DeterministicHierarchy(masterPrivateKey);
+
+        int depth = path.length - 1;
+        //ChildNumber chnum = new ChildNumber(2, false);
+//        path = new ChildNumber[]{new ChildNumber(0, false),
+//                new ChildNumber(2147483647, true),
+//                new ChildNumber(1, false),
+//                new ChildNumber(2147483646, true),
+//                new ChildNumber(2, false)};
+
+
+        DeterministicKey ehkey = dh.deriveChild(Arrays.asList(path).subList(0, depth),
+                false, true, path[depth]);
+
+        byte[] privkeybytes = ehkey.serializePrivate(MAINNET);
+        if (privkeybytes.length == 78)
+        {
+            String hexStr = bytesToHex(privkeybytes);
+            String hextemp = hexStr.substring(hexStr.length() - 64);
+            return hextemp;
+        }
+        else
+        {
+            return null;
+        }
+
+    }
+
+    //
 
     /**
      * 保存私钥
@@ -181,13 +262,9 @@ public class EcKeyUtils {
             // 组合json字符串，存储
             return saveFile(privkey.getBytes(), filename, new File(dir));
         }
-
-        byte[] passwordbyte = sha256(password.getBytes());
-
         // AES crypto
-        byte[] encryptedByteArr = AESUtil.encrypt(passwordbyte,privkey.trim() );
+        byte[] encryptedByteArr = AESUtil.encrypt(password,privkey.trim().getBytes());
         String encryptedPwd = new String(encryptedByteArr);
-        Log.e("encryptedPwd",encryptedPwd);
         // save
 
         return saveFile(encryptedByteArr, filename, new File(dir));
@@ -237,11 +314,8 @@ public class EcKeyUtils {
             return new String(b);
         }
 
-        // password 转 sha256
-        byte[] passwordbyte = sha256(password.getBytes());
-
         // AES 解密
-        byte[] decryptedByteArr = AESUtil.decrypt(b, passwordbyte);
+        byte[] decryptedByteArr = AESUtil.decrypt(password, b);
 
         if (decryptedByteArr == null){
             return "ERROR";
@@ -265,6 +339,36 @@ public class EcKeyUtils {
         ECPrivateKey prvatekey = EcKeyUtils.getEcPrivateKeyFromHex(privkey);
         ECPublicKey publickey = EcKeyUtils.getPublicKeyFromPrivateKey(prvatekey);
         return EcUtils.generateAddressByPublickey(publickey);
+    }
+
+    public static String GenCompositeAddress(String privkey, String privKeyShadow)
+    {
+        /*
+        * 0x11
+        * 0x04 65 bytes
+        * 32 bytes hash
+        * */
+        // privkey 2 public
+        ECPrivateKey prvatekey = EcKeyUtils.getEcPrivateKeyFromHex(privkey);
+        ECPublicKey publickey = EcKeyUtils.getPublicKeyFromPrivateKey(prvatekey);
+        byte[] pub1 = EcUtils.EcPublicKey2Bytes(publickey);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+//        String test = "hello";
+//        byte[] data = ECIESEncrypt(publickey,test.getBytes());
+//        byte[] datatest = ECIESDecrypt(prvatekey, data);
+//        String s = new String(datatest);
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        ECPrivateKey prvatekeyshadow = EcKeyUtils.getEcPrivateKeyFromHex(privKeyShadow);
+        ECPublicKey publickeyshadow = EcKeyUtils.getPublicKeyFromPrivateKey(prvatekeyshadow);
+        byte[] pub2 = EcUtils.EcPublicKey2Bytes(publickeyshadow);
+        byte[] pub2hash = sha256(pub2);
+
+        byte[] address = new byte[1+65+32];
+        address[0] = 0x11;
+        System.arraycopy(pub1, 0, address, 1,65);
+        System.arraycopy(pub2hash, 0, address, 66,32);
+        return EcUtils.generateAddress(address);
     }
 
     /**
@@ -334,7 +438,7 @@ public class EcKeyUtils {
     public static ECPrivateKey generateEcPrivateKey()
     {
         try {
-            Provider provider = new org.bouncycastle.jce.provider.BouncyCastleProvider();
+            Provider provider = new BouncyCastleProvider();
             KeyPairGenerator kpg = KeyPairGenerator.getInstance(ALGORITHM,provider);
             kpg.initialize(new ECGenParameterSpec(SPACE_NAME), new SecureRandom());
             KeyPair keyPair = kpg.generateKeyPair();
@@ -356,7 +460,7 @@ public class EcKeyUtils {
             //byte[] hexdata = dec.decodeBuffer(hexStr);
             //String hexString = bytesToHex(hexdata);
 
-            Provider provider = new org.bouncycastle.jce.provider.BouncyCastleProvider();
+            Provider provider = new BouncyCastleProvider();
 
             org.bouncycastle.jce.spec.ECNamedCurveParameterSpec spec = org.bouncycastle.jce.ECNamedCurveTable.getParameterSpec(SPACE_NAME);
             KeyFactory kf = KeyFactory.getInstance(ALGORITHM, provider);
@@ -377,7 +481,7 @@ public class EcKeyUtils {
     public static ECPublicKey getPublicKeyFromPrivateKey(ECPrivateKey privateKey) {
         // prime256v1
         try {
-            Provider provider = new org.bouncycastle.jce.provider.BouncyCastleProvider();
+            Provider provider = new BouncyCastleProvider();
 
             KeyFactory keyFactory = KeyFactory.getInstance(ALGORITHM, provider);
             org.bouncycastle.jce.spec.ECParameterSpec ecSpec = org.bouncycastle.jce.ECNamedCurveTable.getParameterSpec(SPACE_NAME);
@@ -395,13 +499,13 @@ public class EcKeyUtils {
      * 从16进制的字符中获取公钥
      *
      */
-    public static ECPublicKey getPublicKeyFromHex(String hexstr) {
+    public static ECPublicKey getPublicKeyFromHex(byte[] pubKey) {
         ECPublicKey pk;
         try {
-            Provider provider = new org.bouncycastle.jce.provider.BouncyCastleProvider();
+            Provider provider = new BouncyCastleProvider();
 
 //			byte[] pubKey = Hex.decodeHex(hexstr.toCharArray());
-            byte[] pubKey = Hex.decode(new String(hexstr.toCharArray()));
+//            byte[] pubKey = Hex.decode(new String(hexstr.toCharArray()));
             org.bouncycastle.jce.spec.ECNamedCurveParameterSpec spec = org.bouncycastle.jce.ECNamedCurveTable.getParameterSpec(SPACE_NAME);
             KeyFactory kf = KeyFactory.getInstance(ALGORITHM, provider);
             org.bouncycastle.jce.spec.ECNamedCurveSpec params = new org.bouncycastle.jce.spec.ECNamedCurveSpec(SPACE_NAME, spec.getCurve(), spec.getG(), spec.getN());
@@ -411,6 +515,41 @@ public class EcKeyUtils {
             return pk;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ECPublicKey getPulicKeyFromAddress(String address){
+        //
+        String flag = address.substring(0, 8);
+        if (!flag.equals("CFWCHAIN"))
+            return null;
+        // decode base58
+        String base58str = address.substring(8);
+        Base58 base58  =new Base58();
+        try {
+            byte[] data = base58.decode(base58str);
+            byte[] pub = null;
+            if (data[0]==0x11)
+            {
+                if (data[1]==4 && data.length >= 66)
+                {
+                    pub = new byte[65];
+                    System.arraycopy(data,1, pub,0, 65);
+                }
+            } else if (data[0]==4 && data.length >= 65){
+                pub = new byte[65];
+                System.arraycopy(data,0, pub,0, 65);
+            }
+
+            if (pub != null)
+            {
+                // 转化成公钥
+                return getPublicKeyFromHex(pub);
+            }
+        } catch (Exception e)
+        {
+            return null;
         }
         return null;
     }
@@ -431,6 +570,37 @@ public class EcKeyUtils {
         }
         return sb.toString();
     }
+
+    public static byte[] ECIESEncrypt(ECPublicKey pubkey, byte[] raw){
+        try {
+            //Cipher cipher = Cipher.getInstance("ECIESwithAES/NONE/PKCS7Padding", "BC");
+            Cipher cipher = Cipher.getInstance("ECIESwithAES/NONE/PKCS7Padding",
+                    new BouncyCastleProvider());
+            cipher.init(Cipher.ENCRYPT_MODE, pubkey);
+            //cipher.init(Cipher.ENCRYPT_MODE, pubkey);
+            byte[] cipherText = cipher.doFinal(raw);
+            return cipherText;
+        } catch (Exception e)
+        {
+            return null;
+        }
+
+    }
+
+    public static byte[] ECIESDecrypt(ECPrivateKey privateKey, byte[] raw){
+        try {
+            Cipher cipher = Cipher.getInstance(
+                    "ECIESwithAES/NONE/PKCS7Padding",
+                    new BouncyCastleProvider());
+            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+            byte[] cipherText = cipher.doFinal(raw);
+            return cipherText;
+        } catch (Exception e)
+        {
+            return null;
+        }
+    }
+
 }
 
 

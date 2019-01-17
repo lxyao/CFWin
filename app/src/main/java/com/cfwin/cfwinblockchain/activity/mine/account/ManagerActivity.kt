@@ -42,7 +42,8 @@ class ManagerActivity :SubBaseActivity() {
 
     override fun initView() {
         setTopNavBackground()
-        topMenu.text = getString(R.string.add_account)
+//        暂时隐藏功能
+//        topMenu.text = getString(R.string.add_account)
         topTitle.text = getString(R.string.account_manager)
     }
 

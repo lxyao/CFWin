@@ -30,6 +30,7 @@
     </android.support.v7.widget.CardView>
 
     <TextView
+        android:visibility="invisible"
         android:id="@+id/tmp_tv1"
         style="@style/wrap"
         android:textSize="@dimen/sp_15"
@@ -40,6 +41,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tmpCard1"/>
     <android.support.v7.widget.CardView
+        android:visibility="invisible"
         android:id="@+id/tmpCard2"
         app:layout_constraintTop_toBottomOf="@id/tmp_tv1"
         app:layout_constraintLeft_toLeftOf="parent"

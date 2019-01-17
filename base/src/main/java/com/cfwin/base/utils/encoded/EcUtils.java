@@ -6,10 +6,14 @@ import org.bitcoinj.core.Base58;
 
 import java.math.BigInteger;
 import java.security.interfaces.ECPublicKey;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Administrator on 2018/9/28.
  */
+
+
 
 public class EcUtils {
     /**
@@ -30,6 +34,13 @@ public class EcUtils {
         return null;
     }
 
+    public static String generateAddress(byte[] addressbytes)
+    {
+        Base58 base58  =new Base58();
+        String address = base58.encode(addressbytes);
+        return "CFWCHAIN"+address;
+    }
+
     /**
      * 格式化公钥
      */
@@ -40,6 +51,17 @@ public class EcUtils {
                 + getStandardSizeInteger(publicKey.getW().getAffineX(),SZIE)
                 + getStandardSizeInteger(publicKey.getW().getAffineY(),SZIE);
         return res;
+    }
+
+    public static byte[] EcPublicKey2Bytes(ECPublicKey publicKey)
+    {
+        String str = formatEcPublicKey(publicKey);
+        try {
+            return Hex.decodeHex(str.toCharArray());
+        } catch (Exception e)
+        {
+            return null;
+        }
     }
 
     private static String getStandardSizeInteger(BigInteger value, int size)
@@ -94,5 +116,35 @@ public class EcUtils {
 //        return null;
 //    }
 
+
+    public static String CFEncrypt(List<String> addressList, byte[] clearData)
+    {
+        CFWinCipherData cfcipher = new CFWinCipherData();
+
+        // 加密
+        String password = cfcipher.encrypt(clearData);
+
+        // 创建授权
+        List<byte[]> auths = new ArrayList<>();
+        for (String address: addressList) {
+            if (!cfcipher.addAuth(password, address))
+                return null;
+        }
+
+        // 生成字符串
+        return cfcipher.encodeToString();
+    }
+
+    public static byte[] CFDecrypt(String privkey, String cipherData)
+    {
+        // 1.
+        CFWinCipherData cfcipher = new CFWinCipherData();
+        try {
+            return cfcipher.decrypt(cipherData, privkey);
+        }catch (Exception e)
+        {
+            return null;
+        }
+    }
 }
 

@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.EditText
 import butterknife.BindView
 import butterknife.OnCheckedChanged
+import com.cfwin.base.utils.AddressUtil
 import com.cfwin.base.utils.PatternUtil
 import com.cfwin.base.weak.AbsWeakContext
 import com.cfwin.cfwinblockchain.Constant
@@ -17,7 +18,6 @@ import com.cfwin.cfwinblockchain.activity.home.MainActivity
 import com.cfwin.cfwinblockchain.beans.UserBean
 import com.cfwin.cfwinblockchain.db.LocalDBManager
 import com.cfwin.cfwinblockchain.db.tables.UserOperaDao
-import com.cfwin.cfwinblockchain.utils.AddressUtil
 
 /**
  * 导入身份

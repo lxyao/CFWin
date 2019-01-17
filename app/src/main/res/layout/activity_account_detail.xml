@@ -44,6 +44,7 @@
             android:background="@color/bg_FF9D33"
             android:text="@string/show_account"/>
         <Button
+            android:visibility="gone"
             android:id="@+id/change_score"
             style="@style/detail_btn"
             android:background="@color/bg_272F4F"
