@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_272F4F"
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+    <include layout="@layout/base_top_toolbar"/>
+    <RadioGroup
+        android:id="@+id/type"
+        android:orientation="horizontal"
+        style="@style/match.wrap"
+        android:minHeight="@dimen/dp_45"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_15"
+        android:layout_marginLeft="@dimen/dp_15">
+        <RadioButton
+            android:id="@+id/imap"
+            style="@style/match"
+            android:text="IMAP"
+            android:gravity="center"
+            android:button="@null"
+            tools:checked="true"
+            android:background="@drawable/selector_left_corners"
+            android:layout_weight="1"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/white"/>
+        <RadioButton
+            android:id="@+id/pop3"
+            style="@style/match"
+            android:text="POP3"
+            android:gravity="center"
+            android:button="@null"
+            android:background="@drawable/selector_middle"
+            android:layout_weight="1"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/bg_66"/>
+        <RadioButton
+            android:id="@+id/exchange"
+            style="@style/match"
+            android:text="Exchange"
+            android:gravity="center"
+            android:button="@null"
+            android:background="@drawable/selector_right_corners"
+            android:layout_weight="1"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/bg_66"/>
+    </RadioGroup>
+
+    <LinearLayout
+        style="@style/protocol_group"
+        android:paddingBottom="@dimen/dp_10"
+        android:background="@null"
+        android:gravity="center_vertical">
+        <TextView style="@style/protocol_left_txt"
+            android:text="@string/userCode" />
+        <TextView
+            android:id="@+id/show_address"
+            style="@style/protocol_right_txt"
+            tools:text="user@example.com"/>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/protocol_group"
+        style="@style/match.wrap" />
+</LinearLayout>

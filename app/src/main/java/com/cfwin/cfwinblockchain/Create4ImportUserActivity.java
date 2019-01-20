@@ -3,10 +3,8 @@ package com.cfwin.cfwinblockchain;
 import android.Manifest;
 import android.content.Intent;
 import android.view.View;
-import android.view.Window;
 
 import com.cfwin.base.activity.BaseActivity;
-import com.cfwin.base.utils.LogUtil;
 import com.cfwin.cfwinblockchain.activity.home.MainActivity;
 import com.cfwin.cfwinblockchain.activity.user.CreateUserActivity;
 import com.cfwin.cfwinblockchain.activity.user.ImportUserActivity;

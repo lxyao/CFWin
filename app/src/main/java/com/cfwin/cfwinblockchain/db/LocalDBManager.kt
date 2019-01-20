@@ -19,6 +19,8 @@ class LocalDBManager constructor(context: Context) : AbsDBManager(context, Const
         db?.execSQL(transInfoSql)
         val mnemonic = "create table if not exists mnemonic(id INTEGER PRIMARY KEY AUTOINCREMENT, address text unique not null, word text, identifyPriKey text, shadowPriKey text);"
         db?.execSQL(mnemonic)
+        val mailContacts = "create table if not exists mailContacts(id INTEGER primary key autoincrement, nickName varchar(25) not null, mail varchar(35) unique not null, friendId text, pgpKey text);"
+        db?.execSQL(mailContacts)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -41,6 +43,10 @@ class LocalDBManager constructor(context: Context) : AbsDBManager(context, Const
         if(newVersion > 6){
             val mnemonic = "create table if not exists mnemonic(id INTEGER PRIMARY KEY AUTOINCREMENT, address text unique not null, word text, identifyPriKey text, shadowPriKey text);"
             db?.execSQL(mnemonic)
+        }
+        if(newVersion > 7){
+            val mailContacts = "create table if not exists mailContacts(id INTEGER primary key autoincrement, nickName varchar(25) not null, mail varchar(35) unique not null, friendId text, pgpKey text);"
+            db?.execSQL(mailContacts)
         }
     }
 

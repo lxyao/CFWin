@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/trans_root"
+    android:orientation="vertical">
+    <include layout="@layout/base_top_toolbar"/>
+    <EditText
+        android:id="@+id/serach"
+        style="@style/service_input"
+        android:enabled="true"
+        android:layout_marginTop="@dimen/dp_10"
+        android:hint="搜索好友"
+        android:textColorHint="@color/bg_99"
+        android:paddingLeft="@dimen/dp_10"
+        android:paddingRight="@dimen/dp_10"
+        android:background="@drawable/bg_white_circle_shape"/>
+    <ListView
+        android:id="@android:id/list"
+        style="@style/list"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:paddingRight="@dimen/dp_12"
+        android:paddingLeft="@dimen/dp_12"
+        android:layout_marginTop="@dimen/dp_10"/>
+</LinearLayout>

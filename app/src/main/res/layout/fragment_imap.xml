@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_272F4F">
+
+    <ScrollView
+        style="@style/match">
+        <LinearLayout
+            style="@style/match.ver_linear">
+            <fragment
+                android:id="@+id/in_fragment"
+                android:name="com.cfwin.cfwinblockchain.activity.mail.fragment.imap.InFragment"
+                style="@style/match.wrap"/>
+            <fragment
+                android:id="@+id/out_fragment"
+                android:name="com.cfwin.cfwinblockchain.activity.mail.fragment.imap.OutFragment"
+                style="@style/match.wrap"
+                android:layout_marginTop="@dimen/dp_20"/>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

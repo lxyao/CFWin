@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_272F4F">
+    <include layout="@layout/base_top_toolbar"/>
+
+    <TextView
+        style="@style/wrap"
+        android:textSize="@dimen/sp_22"
+        android:textColor="@color/white"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/dp_80"/>
+    <EditText
+        android:id="@+id/mail_code"
+        android:layout_marginTop="@dimen/dp_20"
+        style="@style/service_input"
+        android:enabled="true"
+        android:hint="163/126/139/QQ/Gmail"
+        android:textColorHint="@color/bg_66"/>
+    <View style="@style/service_line"
+        android:layout_marginTop="@dimen/dp_5"/>
+
+    <EditText
+        android:id="@+id/mail_pwd"
+        android:layout_marginTop="@dimen/dp_10"
+        style="@style/service_input"
+        android:enabled="true"
+        android:hint="@string/mail_pwd_hint"
+        android:textColorHint="@color/bg_66"
+        android:inputType="textPassword"/>
+    <View style="@style/service_line"
+        android:layout_marginTop="@dimen/dp_5"/>
+
+    <TextView
+        android:id="@+id/mail_settings"
+        style="@style/wrap"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_12"
+        android:layout_gravity="right"
+        android:textSize="@dimen/sp_16"
+        android:textColor="@color/bg_FF9D33"
+        android:text="@string/mail_settings" />
+
+    <Button
+        android:id="@+id/login"
+        android:onClick="onClick"
+        style="@style/login_btn"
+        android:background="@drawable/bg_complete_btn"
+        android:text="@string/confirm"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="@dimen/dp_25"/>
+</LinearLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/match.wrap.hor_linear"
+    android:paddingLeft="@dimen/dp_12"
+    android:paddingRight="@dimen/dp_12"
+    tools:background="@color/bg_272F4F">
+    <ImageView
+        android:id="@+id/item_head"
+        android:layout_width="@dimen/dp_80"
+        android:layout_height="@dimen/dp_80"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/ic_user_head"/>
+    <LinearLayout
+        style="@style/match.wrap.ver_linear"
+        android:layout_marginLeft="@dimen/dp_25"
+        android:gravity="center_vertical">
+        <TextView
+            android:id="@+id/item_nickName"
+            style="@style/match.wrap"
+            tools:text="康乃馨"
+            android:singleLine="true"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/bg_dd" />
+        <TextView
+            android:id="@+id/item_id"
+            style="@style/match.wrap"
+            tools:text="康乃馨"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/bg_dd"
+            android:layout_marginTop="@dimen/dp_5"/>
+        <TextView
+            android:id="@+id/item_content"
+            style="@style/match.wrap"
+            tools:text="康乃馨jdisdlfdifjsdfsdfljsfisdfsdilfdifsiddssj"
+            android:singleLine="true"
+            android:textSize="@dimen/sp_16"
+            android:textColor="@color/bg_dd"
+            android:layout_marginTop="@dimen/dp_5"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="secrets">
+        <item>@string/isNull</item>
+        <item>SSL/TLS</item>
+        <item>STARTTLS</item>
+    </string-array>
+</resources>

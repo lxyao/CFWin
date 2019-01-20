@@ -9,6 +9,11 @@
         <item name="colorAccent">@android:color/white</item>
     </style>
 
+    <style name="trans_root" parent="match">
+        <item name="android:background">@color/bg_272F4F</item>
+        <item name="android:fitsSystemWindows">true</item>
+    </style>
+
     <style name="create_user_input" parent="@style/match.wrap">
         <item name="android:singleLine">true</item>
         <item name="android:maxLength">20</item>
@@ -121,5 +126,27 @@
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/sp_16</item>
         <item name="android:onClick">onClick</item>
+    </style>
+
+    <style name="protocol_group" parent="match.wrap.hor_linear">
+        <item name="android:paddingTop">@dimen/dp_10</item>
+        <item name="android:paddingLeft">@dimen/dp_15</item>
+        <item name="android:paddingRight">@dimen/dp_15</item>
+        <item name="android:background">@color/bg_20253A</item>
+    </style>
+
+    <style name="protocol_left_txt" parent="match.wrap">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/sp_16</item>
+        <item name="android:layout_weight">2.5</item>
+    </style>
+
+    <style name="protocol_right_txt" parent="match.wrap">
+        <item name="android:textColor">@color/bg_97</item>
+        <item name="android:textSize">@dimen/sp_16</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColorHint">@color/bg_99</item>
+        <item name="android:layout_weight">1</item>
     </style>
 </resources>

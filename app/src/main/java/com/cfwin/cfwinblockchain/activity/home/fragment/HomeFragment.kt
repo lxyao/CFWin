@@ -9,6 +9,7 @@ import butterknife.OnClick
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseFragment
 import com.cfwin.cfwinblockchain.activity.login.ScanResultActivity
+import com.cfwin.cfwinblockchain.activity.mail.MailLoginActivity
 
 /**
  * 主界面 - 首页布局
@@ -36,10 +37,16 @@ class HomeFragment : SubBaseFragment() {
 
     override fun initData() {}
 
-    @OnClick(R.id.scanLogin)
+    @OnClick(R.id.scanLogin, R.id.mail)
     override fun onClick(v: View?) {
-        if(v?.id == R.id.scanLogin){
-            startActivity(Intent(mContext!!, ScanResultActivity::class.java))
-        }else super.onClick(v)
+        when(v?.id){
+            R.id.mail->{
+                startActivity(Intent(mContext!!, MailLoginActivity::class.java))
+            }
+            R.id.scanLogin->{
+                startActivity(Intent(mContext!!, ScanResultActivity::class.java))
+            }
+            else-> super.onClick(v)
+        }
     }
 }

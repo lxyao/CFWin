@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout style="@style/match.wrap"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <TextView
+        android:id="@+id/method"
+        style="@style/protocol_group"
+        android:text="@string/in_service"
+        android:textColor="@color/bg_99" />
+    <LinearLayout
+        style="@style/protocol_group">
+        <TextView style="@style/protocol_left_txt"
+            android:text="@string/service" />
+        <EditText
+            android:id="@+id/service_address"
+            style="@style/protocol_right_txt"
+            tools:text="www.baidu.com" />
+    </LinearLayout>
+    <LinearLayout
+        style="@style/protocol_group">
+        <TextView
+            android:id="@+id/account"
+            style="@style/protocol_left_txt"
+            android:text="@string/userCode"/>
+        <EditText
+            android:id="@+id/userAccount"
+            style="@style/protocol_right_txt"
+            android:hint="@string/must_input"/>
+    </LinearLayout>
+    <LinearLayout
+        style="@style/protocol_group">
+        <TextView
+            android:id="@+id/pwd"
+            style="@style/protocol_left_txt"
+            android:text="@string/pwd" />
+        <EditText
+            android:id="@+id/userPwd"
+            style="@style/protocol_right_txt"
+            android:hint="@string/must_input"/>
+    </LinearLayout>
+    <LinearLayout
+        style="@style/protocol_group">
+        <TextView
+            android:id="@+id/port_title"
+            style="@style/protocol_left_txt"
+            android:text="@string/port"/>
+        <EditText
+            android:id="@+id/port"
+            style="@style/protocol_right_txt"
+            android:hint="140"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ssl_group"
+        style="@style/protocol_group"
+        android:paddingBottom="@dimen/dp_10">
+        <TextView
+            android:id="@+id/ssl"
+            style="@style/protocol_left_txt"
+            android:text="@string/secret"
+            android:layout_weight="1"/>
+        <CheckBox
+            android:id="@+id/secrect"
+            style="@style/protocol_right_txt"
+            android:text="@string/isNull"
+            android:button="@null"
+            android:layout_weight="2"
+            android:clickable="false"
+            android:gravity="right|center_vertical"/>
+    </LinearLayout>
+</LinearLayout>
