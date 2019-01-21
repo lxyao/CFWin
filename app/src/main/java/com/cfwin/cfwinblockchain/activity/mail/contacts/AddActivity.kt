@@ -9,6 +9,8 @@ import butterknife.BindView
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
 import com.cfwin.cfwinblockchain.beans.mail.ContactBean
+import com.cfwin.cfwinblockchain.db.LocalDBManager
+import com.cfwin.cfwinblockchain.db.tables.ContactsOperaDao
 import com.google.zxing.CaptureActivity
 
 /**
@@ -75,7 +77,7 @@ class AddActivity: SubBaseActivity() {
         val pgpKey = pgp_key.text.toString().trim()
         val bean = ContactBean(nickName = name, mail = mail, friendId = friendId, pgpKey = pgpKey)
         //添加到本地库
-
+        LocalDBManager(this).getTableOperation(ContactsOperaDao::class.java).addContact(bean)
         setResult(Activity.RESULT_OK)
         finish()
     }

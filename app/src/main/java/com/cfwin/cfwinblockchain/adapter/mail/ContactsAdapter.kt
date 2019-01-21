@@ -8,11 +8,12 @@ import butterknife.BindView
 import com.cfwin.base.adapter.ImplBaseAdapter
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.adapter.SubBaseViewHolder
+import com.cfwin.cfwinblockchain.beans.mail.ContactBean
 
 /**
  * 联系人列表数据展示
  */
-class ContactsAdapter(context: Context, data: MutableList<String> ): ImplBaseAdapter<String>(context, data){
+class ContactsAdapter(context: Context, data: MutableList<ContactBean> ): ImplBaseAdapter<ContactBean>(context, data){
     override fun getLayoutId(position: Int): Int {
         return R.layout.list_item_contact
     }
@@ -28,7 +29,7 @@ class ContactsAdapter(context: Context, data: MutableList<String> ): ImplBaseAda
 
     override fun <B : BaseViewHolder> showView(position: Int, holder: B) {
         val tmp = holder as ViewHolder
-        tmp.nickName.text = "测试数据$position"
+        tmp.nickName.text = data[position].nickName
     }
 
     class ViewHolder(view: View, resId: Int): SubBaseViewHolder(view, resId){

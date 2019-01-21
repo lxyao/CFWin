@@ -92,4 +92,5 @@
     <string name="is_input">选填</string>
     <string name="pgp_pubkey">PGP公约：</string>
     <string name="nickName_hint">备注：为了更好的与好友交流，建议您给好友以清晰的昵称备注。</string>
+    <string name="mail">邮箱：</string>
 </resources>
