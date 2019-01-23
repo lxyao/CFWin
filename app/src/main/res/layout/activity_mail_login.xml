@@ -18,6 +18,7 @@
         android:layout_marginTop="@dimen/dp_20"
         style="@style/service_input"
         android:enabled="true"
+        android:inputType="textEmailAddress"
         android:hint="163/126/139/QQ/Gmail"
         android:textColorHint="@color/bg_66"/>
     <View style="@style/service_line"

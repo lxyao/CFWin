@@ -27,6 +27,7 @@ class ContactsActivity: SubBaseActivity(), TextWatcher{
     @BindView(android.R.id.list)lateinit var listView: ListView
     private lateinit var adapter: ContactsAdapter
     private lateinit var contactDao: ContactsOperaDao
+    private var isSelected = false
 
     override fun getLayoutId(): Int {
         return R.layout.activity_contacts
@@ -34,7 +35,10 @@ class ContactsActivity: SubBaseActivity(), TextWatcher{
 
     override fun initView() {
         topTitle.text = getString(R.string.mail_contact)
-        topMenu.text = getString(R.string.add)
+        isSelected = intent.getBooleanExtra("isSelected", false)
+        if(!isSelected){
+            topMenu.text = getString(R.string.add)
+        }
         serach.addTextChangedListener(this)
     }
 
@@ -48,6 +52,12 @@ class ContactsActivity: SubBaseActivity(), TextWatcher{
     @OnItemClick(android.R.id.list)
     fun onItemClick(position: Int){
         val bean = adapter.getItem(position) as ContactBean
+        if(isSelected){
+            setResult(Activity.RESULT_OK, Intent()
+                    .putExtra("user", bean))
+            finish()
+            return
+        }
         startActivityForResult(Intent(this, DetailActivity::class.java)
                 .putExtra("bean", bean),
                 201)

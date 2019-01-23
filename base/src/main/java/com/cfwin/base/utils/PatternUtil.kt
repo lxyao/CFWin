@@ -26,4 +26,12 @@ object PatternUtil {
         val p = Pattern.compile("[^\\x00-\\xff]")
         return p.matcher(str).find()
     }
+
+    /**
+     * 是否是正确的电子邮箱
+     */
+    fun isMail(mail: String): Boolean{
+        val p = Pattern.compile("^([a-zA-Z0-9_\\.\\-])+\\@(([a-zA-Z0-9\\-])+\\.)+([a-zA-Z0-9]{2,4})+$")
+        return p.matcher(mail).find()
+    }
 }

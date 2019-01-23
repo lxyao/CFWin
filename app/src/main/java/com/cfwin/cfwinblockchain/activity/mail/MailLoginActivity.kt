@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.EditText
 import butterknife.BindView
 import butterknife.OnClick
+import com.cfwin.base.utils.PatternUtil
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
 
@@ -49,6 +50,10 @@ class MailLoginActivity: SubBaseActivity() {
         val user = mailUser.text.toString().trim()
         if(TextUtils.isEmpty(user)){
             showToast(getString(R.string.please_input, " 邮箱账号"))
+            return
+        }
+        if(!PatternUtil.isMail(user)){
+            showToast(getString(R.string.please_input, " 正确的邮箱地址"))
             return
         }
         val pwd = mailPwd.text.toString().trim()

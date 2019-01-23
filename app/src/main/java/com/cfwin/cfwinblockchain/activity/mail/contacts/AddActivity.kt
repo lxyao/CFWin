@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.EditText
 import butterknife.BindView
+import com.cfwin.base.utils.PatternUtil
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
 import com.cfwin.cfwinblockchain.beans.mail.ContactBean
@@ -70,6 +71,10 @@ class AddActivity: SubBaseActivity() {
         val mail = contactMail.text.toString().trim()
         if(TextUtils.isEmpty(mail)){
             showToast(getString(R.string.contact_mail_hint))
+            return
+        }
+        if(!PatternUtil.isMail(mail)){
+            showToast(getString(R.string.please_input, " 正确的邮箱地址"))
             return
         }
         v?.isEnabled = false

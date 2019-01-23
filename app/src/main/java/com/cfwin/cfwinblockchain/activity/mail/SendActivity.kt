@@ -3,14 +3,12 @@ package com.cfwin.cfwinblockchain.activity.mail
 import android.app.Activity
 import android.content.Intent
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.RadioGroup
-import android.widget.TextView
+import android.widget.*
 import butterknife.BindView
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
 import com.cfwin.cfwinblockchain.activity.mail.contacts.ContactsActivity
+import com.cfwin.cfwinblockchain.beans.mail.ContactBean
 
 /**
  * 邮件发送界面
@@ -45,13 +43,17 @@ class SendActivity: SubBaseActivity() {
     }
 
     private fun onChecked(group: RadioGroup, checkedId: Int){
-
+        if(checkedId == R.id.pgp){
+            showToast(getString(R.string.pgp_pubkey_hint))
+            group.findViewById<RadioButton>(checkedId).isChecked = false
+        }
     }
 
     override fun onClick(v: View?) {
         when(v?.id){
             R.id.contacts->{
-                startActivityForResult(Intent(mContext!!, ContactsActivity::class.java),
+                startActivityForResult(Intent(mContext!!, ContactsActivity::class.java)
+                        .putExtra("isSelected", true),
                         201)
             }
             R.id.toolbar_menu->{
@@ -65,7 +67,8 @@ class SendActivity: SubBaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if(resultCode == Activity.RESULT_OK){
             if(requestCode == 201){
-                data?.getStringExtra("name")
+                val user = data?.getParcelableExtra<ContactBean>("user")
+                inUser.setText(user!!.mail)
             }
         }
     }
