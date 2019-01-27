@@ -6,6 +6,18 @@ object Constant {
      */
     const val configFileName = "appConfig"
     /**
+     * 邮箱imap协议配置文件名
+     */
+    const val imapConfig = "imapConfig"
+    /**
+     * 邮箱pop3协议配置文件名
+     */
+    const val popConfig = "popConfig"
+    /**
+     * 邮箱exchange协议配置文件名
+     */
+    const val exchangeConfig = "exchangeConfig"
+    /**
      * 是否第一次使用app
      */
     const val isFirstUse = "isFirstUse"
@@ -29,6 +41,10 @@ object Constant {
      * 数据库版本号
      */
     const val DB_VERSION = 8
+    /**
+     * 邮箱配置类型
+     */
+    const val configType = "configType"
 
     object API{
         /**
@@ -75,5 +91,31 @@ object Constant {
          * 服务器地址类型 日志
          */
         const val TYPE_LOG = 2
+    }
+
+    /**
+     * 邮箱配置参数
+     */
+    object MAIL_CONFIG{
+        /**
+         * 服务器地址
+         */
+        const val SERVICE_ADDRESS = "service_address"
+        /**
+         * 账号
+         */
+        const val USER_CODE = "user_code"
+        /**
+         * 密码
+         */
+        const val USER_PWD = "user_pwd"
+        /**
+         * 加密方法
+         */
+        const val SECRET_METHOD = "secret_method"
+        /**
+         * 服务器端口
+         */
+        const val SERVICE_PORT = "service_port"
     }
 }

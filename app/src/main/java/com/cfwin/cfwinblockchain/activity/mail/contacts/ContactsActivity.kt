@@ -9,11 +9,11 @@ import android.widget.EditText
 import android.widget.ListView
 import butterknife.BindView
 import butterknife.OnItemClick
+import com.cfwin.cfwinblockchain.MyApplication
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
 import com.cfwin.cfwinblockchain.adapter.mail.ContactsAdapter
 import com.cfwin.cfwinblockchain.beans.mail.ContactBean
-import com.cfwin.cfwinblockchain.db.LocalDBManager
 import com.cfwin.cfwinblockchain.db.tables.ContactsOperaDao
 
 /**
@@ -43,7 +43,7 @@ class ContactsActivity: SubBaseActivity(), TextWatcher{
     }
 
     override fun initData() {
-        contactDao = LocalDBManager(this).getTableOperation(ContactsOperaDao::class.java)
+        contactDao = MyApplication.getDBManager(0).getTableOperation(ContactsOperaDao::class.java)
         val tmp = contactDao.queryData("")
         adapter = ContactsAdapter(this, tmp)
         listView.adapter = adapter

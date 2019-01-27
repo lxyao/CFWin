@@ -4,6 +4,7 @@ package com.cfwin.base
 import android.app.Application
 import android.content.Context
 import android.support.multidex.MultiDex
+import com.cfwin.base.db.AbsDBManager
 import com.cfwin.base.utils.CrashHandler
 
 /**
@@ -28,6 +29,12 @@ open class App : Application() {
         CrashHandler.getInstance().init(this)
         mAppContext = this
     }
+
+    /**
+     * 获取数据库管理对象
+     * @param type 类型
+     */
+    open fun getDBManager(type: Int): AbsDBManager?{ return null}
 
     companion object Tmp{
         /**
