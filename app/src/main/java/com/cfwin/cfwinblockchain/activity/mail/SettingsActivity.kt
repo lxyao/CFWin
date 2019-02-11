@@ -42,7 +42,7 @@ class SettingsActivity: SubBaseActivity(), RadioGroup.OnCheckedChangeListener {
         mailUser.text = intent.getStringExtra("mailUser")
         shared = getSharedPreferences(Constant.configFileName, Activity.MODE_PRIVATE)
         shared?.let {
-            lastCheckId = it.getInt(Constant.configType, R.id.imap)
+            lastCheckId = it.getInt(Constant.configType, R.id.exchange)
             (protocolType.findViewById(lastCheckId) as RadioButton).isChecked = true
         }
     }
