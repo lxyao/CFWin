@@ -95,4 +95,5 @@
     <string name="mail">邮箱：</string>
     <string name="pgp_pubkey_hint">程序小哥，正在疯狂编码中，敬请期待！</string>
     <string name="data_change_save">数据发生改变，是否要保存</string>
+    <string name="send_method_hint">发送方式不明确</string>
 </resources>
