@@ -8,11 +8,12 @@ import butterknife.BindView
 import com.cfwin.base.adapter.ImplBaseAdapter
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.adapter.SubBaseViewHolder
+import com.cfwin.cfwinblockchain.beans.mail.MsgBean
 
 /**
  * 邮箱信息列表
  */
-class MsgListAdapter(context: Context, data: MutableList<String>): ImplBaseAdapter<String>(context, data) {
+class MsgListAdapter(context: Context, data: MutableList<MsgBean>): ImplBaseAdapter<MsgBean>(context, data) {
 
     override fun getLayoutId(position: Int): Int {
         return R.layout.list_item_mail_msg
@@ -29,9 +30,10 @@ class MsgListAdapter(context: Context, data: MutableList<String>): ImplBaseAdapt
 
     override fun <B : BaseViewHolder> showView(position: Int, holder: B) {
         val tmp = holder as ViewHolder
-        tmp.nickName.text = "测试数据$position"
-        tmp.userId.text = "测试id=$position"
-        tmp.content.text = "测试内容${position}测试内容${position}测试内容$position"
+        val bean = data[position]
+        tmp.nickName.text = bean.from
+        tmp.userId.text = bean.time
+        tmp.content.text = bean.subject
     }
 
     class ViewHolder(view: View, resId: Int): SubBaseViewHolder(view, resId){

@@ -48,7 +48,7 @@
         <EditText
             android:id="@+id/port"
             style="@style/protocol_right_txt"
-            android:hint="140"/>
+            tools:hint="140"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/ssl_group"

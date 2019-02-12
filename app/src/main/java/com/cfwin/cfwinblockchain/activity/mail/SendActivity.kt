@@ -8,6 +8,7 @@ import android.widget.*
 import butterknife.BindView
 import com.cfwin.base.utils.LogUtil
 import com.cfwin.cfwinblockchain.BuildConfig
+import com.cfwin.cfwinblockchain.MyApplication
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
 import com.cfwin.cfwinblockchain.activity.mail.contacts.ContactsActivity
@@ -46,7 +47,8 @@ class SendActivity: SubBaseActivity() {
     private lateinit var message: MimeMessage
     private var host = "smtp.sina.com"
     private var loginUser = "liulzx234567890@sina.com"
-    private val loginPwd = "test"
+    private var loginPwd = "test"
+    private lateinit var params: Array<String>
 
     override fun getLayoutId(): Int {
         return R.layout.activity_send_mail
@@ -58,8 +60,14 @@ class SendActivity: SubBaseActivity() {
     }
 
     override fun initData() {
-        if(!BuildConfig.DEBUG){
-            //获取配置信息
+        val protocol = MyApplication.store!!.urlName.protocol
+        params = intent.getStringArrayExtra("params")
+        loginUser = params[1]
+        loginPwd = params[2]
+        host = if(protocol == "pop3" || protocol == "imap"){
+            params[5]
+        }else{
+            params[0]
         }
         nickName.text = "用户"
         mailAddress.text = loginUser
@@ -164,6 +172,7 @@ class SendActivity: SubBaseActivity() {
             message.setText("This is a test mail. $changeContent")
             ts.sendMessage(message, message.allRecipients)
             LogUtil.e(TAG!!, "发送成功 $changeContent")
+            finish()
         } catch (e: MessagingException) {
             e.printStackTrace()
         }

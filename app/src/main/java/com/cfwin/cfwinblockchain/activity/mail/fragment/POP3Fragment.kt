@@ -21,5 +21,7 @@ class POP3Fragment: AbsConfigFragment() {
 
     override fun initData() {
         super.initData()
+        inFragment.port.hint = "110"
+        outFragment.port.hint = "25"
     }
 }

@@ -5,6 +5,7 @@ import com.android.volley.toolbox.Volley
 import com.cfwin.base.App
 import com.cfwin.base.db.AbsDBManager
 import com.cfwin.cfwinblockchain.db.LocalDBManager
+import javax.mail.Store
 
 lateinit var queue: RequestQueue
 
@@ -16,11 +17,21 @@ class MyApplication : App() {
         queue = Volley.newRequestQueue(this)
     }
 
+    override fun onTerminate() {
+        super.onTerminate()
+        store?.close()
+    }
+
     override fun getDBManager(type: Int): AbsDBManager? {
         return LocalDBManager(this)
     }
 
     companion object {
+
+        /**
+         * 保存连接会话
+         */
+        var store: Store? = null
 
         fun getQueue()= queue
 

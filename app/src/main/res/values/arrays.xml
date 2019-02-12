@@ -5,4 +5,10 @@
         <item>SSL/TLS</item>
         <item>STARTTLS</item>
     </string-array>
+
+    <string-array name="send_msg_names">
+        <item>Sent Message</item>
+        <item>已发送</item>
+        <item>发件箱</item>
+    </string-array>
 </resources>

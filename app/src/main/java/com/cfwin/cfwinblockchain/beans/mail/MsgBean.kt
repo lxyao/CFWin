@@ -1,4 +1,3 @@
 package com.cfwin.cfwinblockchain.beans.mail
 
-class MsgBean {
-}
+data class MsgBean(val from: String, val subject: String, val time: String)

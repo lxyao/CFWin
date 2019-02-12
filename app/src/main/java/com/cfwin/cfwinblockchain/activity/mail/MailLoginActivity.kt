@@ -9,12 +9,13 @@ import android.widget.Button
 import android.widget.EditText
 import butterknife.BindView
 import butterknife.OnClick
+import com.cfwin.base.utils.LogUtil
 import com.cfwin.base.utils.PatternUtil
 import com.cfwin.cfwinblockchain.BuildConfig
 import com.cfwin.cfwinblockchain.Constant
+import com.cfwin.cfwinblockchain.MyApplication
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
-import com.cfwin.cfwinblockchain.beans.mail.StoreBean
 import com.cfwin.cfwinblockchain.dao.ImplMailOperaDao
 import java.security.Security
 import javax.mail.*
@@ -24,7 +25,7 @@ import javax.mail.*
  */
 class MailLoginActivity: SubBaseActivity() {
 
-    private lateinit var shared: SharedPreferences;
+    private lateinit var shared: SharedPreferences
     /**
      * 邮箱用户
      */
@@ -75,7 +76,6 @@ class MailLoginActivity: SubBaseActivity() {
         v?.isEnabled = false
         Thread{
             useProtocol(user, pwd)
-//            login()
         }.start()
     }
 
@@ -147,9 +147,11 @@ class MailLoginActivity: SubBaseActivity() {
         val type = shared.getInt(Constant.configType, R.id.exchange)
         val mailDao = ImplMailOperaDao()
         var params = arrayOfNulls<String>(5)
+        var protocol = ""
         val session = when(type){
             R.id.imap->{
                 //imap协议
+                protocol = "imap"
                 val shared = getSharedPreferences(Constant.imapConfig, Activity.MODE_PRIVATE)
                 params = mailDao.getSharedMailConfig(shared, type = 0)
                 params = params.plus(mailDao.getSharedMailConfig(shared, type = 1))
@@ -157,6 +159,7 @@ class MailLoginActivity: SubBaseActivity() {
             }
             R.id.pop3->{
                 //pop3协议
+                protocol = "pop3"
                 val shared = getSharedPreferences(Constant.popConfig, Activity.MODE_PRIVATE)
                 params = mailDao.getSharedMailConfig(shared, type = 0)
                 params = params.plus(mailDao.getSharedMailConfig(shared, type = 1))
@@ -172,22 +175,35 @@ class MailLoginActivity: SubBaseActivity() {
         }
         params[1] = user
         params[2] = pwd
-        val store = session.getStore("pop3")
+        val store = session.getStore(protocol)
         store?.let {
             try{
                 it.connect(user, pwd)
+                val sendNames = resources.getStringArray(R.array.send_msg_names)
+                val folder = it.defaultFolder
+                var name = sendNames[0]
+                for(item in folder.list()){
+                    if(item.name in sendNames){
+                        name = item.name
+                        break
+                    }
+                }
+                MyApplication.store = it
                 startActivity(Intent(this, MsgListActivity::class.java)
-                        .putExtra("store", StoreBean(params, it)))
+                        .putExtra("params", params)
+                        .putExtra("sendBox", name))
                 finish()
             } catch (e: MessagingException){
                 e.printStackTrace()
-                runOnUiThread { findViewById<Button>(R.id.login).isEnabled = true }
+                LogUtil.e(TAG!!, " 邮箱连接失败：${e.toString()}")
+                runOnUiThread {
+                    showToast(getString(R.string.mail_settings_hint))
+                    findViewById<Button>(R.id.login).isEnabled = true
+                }
             } catch (e: Exception){
                 e.printStackTrace()
                 runOnUiThread { findViewById<Button>(R.id.login).isEnabled = true }
             }
         }
-//        startActivity(Intent(this, MsgListActivity::class.java))
-//        finish()
     }
 }

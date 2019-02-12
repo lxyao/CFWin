@@ -18,4 +18,10 @@ class IMAPFragment: AbsConfigFragment() {
         configName = Constant.imapConfig
         initData()
     }
+
+    override fun initData() {
+        super.initData()
+        inFragment.port.hint = "143"
+        outFragment.port.hint = "25"
+    }
 }

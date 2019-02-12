@@ -66,11 +66,21 @@ open class MailOperaDao {
     fun popLogin(params: Array<String?>): Session {
         initSecret()
         with(props){
-            val port = if(TextUtils.isEmpty(params[4]) || "无" == params[4]) 110 else 995
+            val secret = parseSecret(params[3]!!)
+            val port = if(TextUtils.isEmpty(secret) || "无" == secret){
+                110
+            } else {
+                try {
+                    params[4]!!.toInt()
+                }catch (e: NumberFormatException){
+                    e.printStackTrace()
+                    995
+                }
+            }
             put("mail.store.protocol","pop3")
             put("mail.pop3.host", params[0])
             put("mail.pop3.port", port)
-            when(params[4]){
+            when(secret){
                 in arrayOf("SSL/TLS", "STARTTLS")->{
                     authenticator = initAuth(params[1]!!, params[2]!!)
                     put("mail.pop3.socketFactory.class", sslFactory)
@@ -78,7 +88,9 @@ open class MailOperaDao {
                     put("mail.smtp.auth", "true")
                     put("mail.smtp.socketFactory.fallback", "false")
                 }
-                else->{}
+                else->{
+                    remove("mail.pop3.socketFactory.class")
+                }
             }
         }
         return getMailSession(props)
@@ -87,18 +99,29 @@ open class MailOperaDao {
     fun imapLogin(params: Array<String?>): Session {
         initSecret()
         with(props){
-            val port = if(TextUtils.isEmpty(params[4])) 140 else 993
+            val secret = parseSecret(params[3]!!)
+            val port = if(TextUtils.isEmpty(secret)){
+                140
+            }else {
+                try{
+                    params[4]!!.toInt()
+                }catch (e: NumberFormatException){
+                    e.printStackTrace()
+                    993
+                }
+            }
             put("mail.store.protocol","imap")
             put("mail.imap.port", port)
             put("mail.imap.host", params[0])
-            if(params[4] != "无"){
+            if(secret != "无"){
                 // 设置了ssltls需要下面的设置
-                setProperty("mail.imap.socketFactory.class", sslFactory)
-                setProperty("mail.imap.socketFactory.port", "$port")
-                setProperty("mail.imap.port", "$port")
+                authenticator = initAuth(params[1]!!, params[2]!!)
+                put("mail.imap.socketFactory.class", sslFactory)
                 put("mail.smtp.auth", "true")
-                setProperty("mail.imap.auth.login.disable", "true")
-                setProperty("mail.smtp.socketFactory.fallback", "false")
+                put("mail.imap.auth.login.disable", "true")
+                put("mail.smtp.socketFactory.fallback", "false")
+            }else{
+                remove("mail.imap.socketFactory.class")
             }
         }
         return getMailSession(props)
@@ -108,5 +131,12 @@ open class MailOperaDao {
         val session = Session.getInstance(props, if(authenticator == null)null else authenticator)
         session.debug = BuildConfig.DEBUG
         return session
+    }
+
+    private fun parseSecret(param: String)= try{
+        param.split(":")[0]
+    }catch (e: IndexOutOfBoundsException){
+        e.printStackTrace()
+        ""
     }
 }

@@ -37,7 +37,7 @@ abstract class AbsProtocolFragment: SubBaseFragment(), IDataChangeCallback, Text
     /**配置端口名称*/
     @BindView(R.id.port_title)protected lateinit var portTitle: TextView
     /**配置端口*/
-    @BindView(R.id.port)protected lateinit var port: EditText
+    @BindView(R.id.port)lateinit var port: EditText
     /**配置加密名称*/
     @BindView(R.id.ssl)protected lateinit var sslTitle: TextView
     /**配置加密*/
@@ -109,6 +109,9 @@ abstract class AbsProtocolFragment: SubBaseFragment(), IDataChangeCallback, Text
         checkId = try {
             strs[1].toInt()
         }catch (e: IndexOutOfBoundsException){
+            e.printStackTrace()
+            0
+        }catch (e: NumberFormatException){
             e.printStackTrace()
             0
         }

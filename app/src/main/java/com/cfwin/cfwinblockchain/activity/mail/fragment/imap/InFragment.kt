@@ -14,7 +14,7 @@ class InFragment: AbsProtocolFragment() {
 
     override fun initView() {
         super.initView()
-        serviceAddress.hint = "www.alibaba.com"
+        serviceAddress.hint = "partner.outlook.cn"
     }
 
     override fun initData() {

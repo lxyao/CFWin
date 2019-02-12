@@ -15,8 +15,7 @@ class OutFragment: AbsProtocolFragment() {
     override fun initView() {
         super.initView()
         method.text = getString(R.string.out_service)
-        serviceAddress.hint = "www.baidu.com"
-
+        serviceAddress.hint = "smtp.sina.com"
     }
 
     override fun initData() {
