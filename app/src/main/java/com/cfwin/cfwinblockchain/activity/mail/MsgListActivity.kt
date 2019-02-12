@@ -9,6 +9,7 @@ import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseActivity
 import com.cfwin.cfwinblockchain.activity.mail.contacts.ContactsActivity
 import com.cfwin.cfwinblockchain.adapter.mail.MsgListAdapter
+import com.cfwin.cfwinblockchain.beans.mail.StoreBean
 
 /**
  * 邮箱消息列表界面
@@ -20,6 +21,7 @@ class MsgListActivity: SubBaseActivity() {
     /**列表*/
     @BindView(android.R.id.list)internal lateinit var listView: ListView
     private lateinit var adapter: MsgListAdapter
+    private lateinit var storeBean: StoreBean
 
     override fun getLayoutId(): Int {
         return R.layout.activity_secret_mail
@@ -32,6 +34,7 @@ class MsgListActivity: SubBaseActivity() {
     }
 
     override fun initData() {
+        storeBean = intent.getSerializableExtra("store") as StoreBean
         val tmp = mutableListOf<String>()
         for(i in 0..4)tmp.add("${i+1}")
         adapter = MsgListAdapter(this, tmp)

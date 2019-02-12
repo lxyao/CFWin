@@ -16,6 +16,7 @@ import com.cfwin.cfwinblockchain.Constant
 import com.cfwin.cfwinblockchain.R
 import com.cfwin.cfwinblockchain.activity.SubBaseFragment
 import com.cfwin.cfwinblockchain.activity.mail.SecretActivity
+import com.cfwin.cfwinblockchain.dao.ImplMailOperaDao
 
 /**
  * 服务器协议设置，抽像父类
@@ -86,7 +87,7 @@ abstract class AbsProtocolFragment: SubBaseFragment(), IDataChangeCallback, Text
                 .putString(Constant.MAIL_CONFIG.SERVICE_ADDRESS+type, serviceAddress.text.toString().trim())
                 .putString(Constant.MAIL_CONFIG.USER_CODE+type, userAccount.text.toString().trim())
                 .putString(Constant.MAIL_CONFIG.USER_PWD+type, userPwd.text.toString().trim())
-                .putString(Constant.MAIL_CONFIG.SECRET_METHOD+type, secret.text.toString().trim())
+                .putString(Constant.MAIL_CONFIG.SECRET_METHOD+type, secret.text.toString().trim()+":"+checkId)
                 .putString(Constant.MAIL_CONFIG.SERVICE_PORT+type, port.text.toString().trim())
                 .apply()
         isChange = false
@@ -99,23 +100,20 @@ abstract class AbsProtocolFragment: SubBaseFragment(), IDataChangeCallback, Text
      */
     open fun setConfig(fileName: String, type: Int){
         shared = context!!.getSharedPreferences(fileName, Activity.MODE_PRIVATE)
-        val params = getSharedMailConfig(type)
+        val params = ImplMailOperaDao().getSharedMailConfig(shared = shared, type = type)
         serviceAddress.setText(params[0])
         userAccount.setText(params[1])
         userPwd.setText(params[2])
-        secret.text = params[3]
+        val strs = params[3]!!.split(":")
+        secret.text = strs[0]
+        checkId = try {
+            strs[1].toInt()
+        }catch (e: IndexOutOfBoundsException){
+            e.printStackTrace()
+            0
+        }
         port.setText(params[4])
         setTextChange(true)
-    }
-
-    private fun getSharedMailConfig(type: Int): Array<String?>{
-        val params = arrayOfNulls<String>(5)
-        params[0] = shared.getString(Constant.MAIL_CONFIG.SERVICE_ADDRESS+type, "")
-        params[1] = shared.getString(Constant.MAIL_CONFIG.USER_CODE+type, "")
-        params[2] = shared.getString(Constant.MAIL_CONFIG.USER_PWD+type, "")
-        params[3] = shared.getString(Constant.MAIL_CONFIG.SECRET_METHOD+type, "")
-        params[4] = shared.getString(Constant.MAIL_CONFIG.SERVICE_PORT+type, "")
-        return params
     }
 
     private fun setTextChange(isChange: Boolean){
