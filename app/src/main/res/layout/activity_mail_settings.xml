@@ -34,17 +34,18 @@
             android:text="POP3"
             android:gravity="center"
             android:button="@null"
-            android:background="@drawable/selector_middle"
+            android:background="@drawable/selector_right_corners"
             android:layout_weight="1"
             android:textSize="@dimen/sp_16"
             android:textColor="@color/bg_66"/>
         <RadioButton
+            android:visibility="gone"
             android:id="@+id/exchange"
             style="@style/match"
             android:text="Exchange"
             android:gravity="center"
             android:button="@null"
-            android:background="@drawable/selector_right_corners"
+            android:background="@drawable/selector_middle"
             android:layout_weight="1"
             android:textSize="@dimen/sp_16"
             android:textColor="@color/bg_66"/>

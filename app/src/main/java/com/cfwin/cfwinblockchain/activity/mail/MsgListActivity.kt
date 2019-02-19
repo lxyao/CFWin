@@ -65,6 +65,20 @@ class MsgListActivity: SubBaseActivity() {
         }
     }
 
+    override fun onBackPressed() {
+        try{
+            Thread{
+                MyApplication.store?.let {
+                    it.close()
+                }
+            }.start()
+        }catch (e: Exception){
+            e.printStackTrace()
+            LogUtil.e(TAG!!, "关闭邮箱连接异常 $e")
+        }
+        super.onBackPressed()
+    }
+
     fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
         adapter?.addData(mutableListOf(), true)
         when(checkedId){

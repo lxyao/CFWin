@@ -91,3 +91,21 @@
 -keepclassmembers class * extends android.webkit.WebViewClient {
     public void *(android.webkit.WebView, jav.lang.String);
 }
+
+-keep class com.sun.activation.registries.**{
+*;
+}
+-dontwarn com.sun.activation.registries.**
+-keep class javax.activation.**{
+*;
+}
+-dontwarn javax.activation.**
+-keep class org.apache.harmony.**{
+*;
+}
+-dontwarn org.apache.harmony.**
+-keep class com.sun.mail.**{
+*;
+}
+-dontwarn com.sun.mail.**
+-dontwarn javax.mail.**

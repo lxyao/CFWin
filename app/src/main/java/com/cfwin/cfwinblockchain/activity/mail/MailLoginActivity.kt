@@ -155,6 +155,9 @@ class MailLoginActivity: SubBaseActivity() {
                 val shared = getSharedPreferences(Constant.imapConfig, Activity.MODE_PRIVATE)
                 params = mailDao.getSharedMailConfig(shared, type = 0)
                 params = params.plus(mailDao.getSharedMailConfig(shared, type = 1))
+                params = params.plusElement(params[2])
+                params[1] = user
+                params[2] = pwd
                 mailDao.imapLogin(params)
             }
             R.id.pop3->{
@@ -163,18 +166,21 @@ class MailLoginActivity: SubBaseActivity() {
                 val shared = getSharedPreferences(Constant.popConfig, Activity.MODE_PRIVATE)
                 params = mailDao.getSharedMailConfig(shared, type = 0)
                 params = params.plus(mailDao.getSharedMailConfig(shared, type = 1))
+                params = params.plusElement(params[2])
+                params[1] = user
+                params[2] = pwd
                 mailDao.popLogin(params)
             }
             R.id.exchange->{
                 //exchange协议
                 val shared = getSharedPreferences(Constant.exchangeConfig, Activity.MODE_PRIVATE)
                 params = mailDao.getSharedMailConfig(shared, type = 0)
+                params[1] = user
+                params[2] = pwd
                 mailDao.exchangeLogin(params)
             }
             else -> { return }
         }
-        params[1] = user
-        params[2] = pwd
         val store = session.getStore(protocol)
         store?.let {
             try{

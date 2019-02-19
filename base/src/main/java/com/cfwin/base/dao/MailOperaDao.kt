@@ -2,6 +2,7 @@ package com.cfwin.base.dao
 
 import android.text.TextUtils
 import com.cfwin.base.BuildConfig
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 import java.security.Security
 import java.util.*
 import javax.mail.Authenticator
@@ -24,7 +25,8 @@ open class MailOperaDao {
     private var authenticator: Authenticator? = null
 
     private fun initSecret(){
-        Security.addProvider(org.bouncycastle.jce.provider.BouncyCastleProvider())
+        Security.addProvider(BouncyCastleProvider())
+//        Security.addProvider(com.sun.net.ssl.internal.ssl.Provider())
         props = System.getProperties()
     }
 
@@ -82,11 +84,12 @@ open class MailOperaDao {
             put("mail.pop3.port", port)
             when(secret){
                 in arrayOf("SSL/TLS", "STARTTLS")->{
-                    authenticator = initAuth(params[1]!!, params[2]!!)
+                    authenticator = initAuth(params[1]!!, params[10]!!)
                     put("mail.pop3.socketFactory.class", sslFactory)
                     put("mail.pop3.auth.login.disable", "true")
                     put("mail.smtp.auth", "true")
-                    put("mail.smtp.socketFactory.fallback", "false")
+                    put("mail.pop3.socketFactory.fallback", "false")
+                    put("mail.pop3.socketFactory.port", port)
                 }
                 else->{
                     remove("mail.pop3.socketFactory.class")
@@ -115,11 +118,12 @@ open class MailOperaDao {
             put("mail.imap.host", params[0])
             if(secret != "无"){
                 // 设置了ssltls需要下面的设置
-                authenticator = initAuth(params[1]!!, params[2]!!)
+                authenticator = initAuth(params[1]!!, params[10]!!)
                 put("mail.imap.socketFactory.class", sslFactory)
                 put("mail.smtp.auth", "true")
                 put("mail.imap.auth.login.disable", "true")
-                put("mail.smtp.socketFactory.fallback", "false")
+                put("mail.imap.socketFactory.fallback", "false")
+                put("mail.imap.socketFactory.port", port)
             }else{
                 remove("mail.imap.socketFactory.class")
             }
